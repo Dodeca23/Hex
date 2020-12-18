@@ -50,7 +50,7 @@ public class HexMapEditor : MonoBehaviour
     private void EditCell(HexCell cell)
     {
         cell.color = activeColor;
-        cell.elevation = activeElevation;
+        cell.Elevation = activeElevation;
         hexGrid.Refresh();
     }
 
