@@ -10,6 +10,7 @@ public class HexCell : MonoBehaviour
 
     public HexCoordinates coordinates;                          // stores the coordinate of a cell
     public Color color;                                         // stores the color of a cell
+    public int elevation;                                       // stores the elevationlevel of a cell
 
     /// <summary>
     /// Retrieves a cell's neighbor in one direction

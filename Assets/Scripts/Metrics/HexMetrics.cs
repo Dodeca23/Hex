@@ -14,7 +14,8 @@ public class HexMetrics : MonoBehaviour
     public const float SOLIDFACTOR = 0.75f;
     // Part of the cell that is blended
     public const float BLENDFACTOR = 1f - SOLIDFACTOR;
-
+    // The height of each elevationstep
+    public const float ELEVATIONSTEP = 5f;
     #endregion
 
     #region Static Fields
