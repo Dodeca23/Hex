@@ -1,17 +1,27 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour
 {
+    #region Fields
+
     [Tooltip("Collection of colors to choose from.")]
     [SerializeField]
     private Color[] colors = default;
     [Tooltip("Stores the hex grid object.")]
     [SerializeField]
     private HexGrid hexGrid = default;
+    [Tooltip("Textfields used for showing the active elevationlevel.")]
+    [SerializeField]
+    private Text elevationLevelText = default;
 
-    private Color activeColor;
+    private Color activeColor;                      // currently applied color
+    private int activeElevation;                    // currently applied elevation 
 
+    #endregion
+
+    #region MonoBehaviors
     private void Awake()
     {
         SelectColor(0);
@@ -22,12 +32,26 @@ public class HexMapEditor : MonoBehaviour
             HandleInput();
     }
 
+    #endregion
+
+    #region Input
     private void HandleInput()
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit) && !EventSystem.current.IsPointerOverGameObject())
-           hexGrid.ColorCell(hit.point, activeColor);
+           EditCell(hexGrid.GetCell(hit.point));
+    }
+
+    #endregion
+
+    #region Editing
+
+    private void EditCell(HexCell cell)
+    {
+        cell.color = activeColor;
+        cell.Elevation = activeElevation;
+        hexGrid.Refresh();
     }
 
     /// <summary>
@@ -38,4 +62,16 @@ public class HexMapEditor : MonoBehaviour
     {
         activeColor = colors[index];
     }
+
+    /// <summary>
+    /// Sets the current elevation to the cell's elevation
+    /// </summary>
+    /// <param name="elevation"></param>
+    public void SetElevation(float elevation)
+    {
+        activeElevation = (int)elevation;
+        elevationLevelText.text = activeElevation.ToString();
+    }
+
+    #endregion
 }
