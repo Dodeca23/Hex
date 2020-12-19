@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1366
     height: 695
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -267,7 +267,8 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SkipHidden: 0
     m_SearchArea: 1
-    m_Folders: []
+    m_Folders:
+    - Assets/Scripts/Cells
     m_Globs: []
   m_ViewMode: 0
   m_StartGridSize: 64
@@ -449,9 +450,9 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.036995865, y: 0.75629365, z: -0.6517803, w: -0.04292591}
+    m_Target: {x: 0.22806814, y: 0.3429994, z: -0.08623868, w: 0.9071439}
     speed: 2
-    m_Value: {x: -0.036995698, y: 0.75629026, z: -0.6517773, w: -0.042925715}
+    m_Value: {x: 0.22806692, y: 0.34299755, z: -0.08623822, w: 0.907139}
   m_Size:
     m_Target: 25.834286
     speed: 2
@@ -597,9 +598,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: f0370000
-      m_LastClickedID: 14320
-      m_ExpandedIDs: 6afbffff
+      m_SelectedIDs: 9c310000
+      m_LastClickedID: 0
+      m_ExpandedIDs: 6cfbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 

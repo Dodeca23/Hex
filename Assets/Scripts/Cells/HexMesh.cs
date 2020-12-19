@@ -114,8 +114,7 @@ public class HexMesh : MonoBehaviour
         Vector3 v4 = v2 + bridge;
         v3.y = v4.y = neighbor.Elevation * HexMetrics.ELEVATIONSTEP;
 
-        Quads.AddQuad(v1, v2, v3, v4, vertices, triangles);
-        Quads.AddQuadColor(cell.color, neighbor.color, colors);
+        TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
         if(direction <= HexDirection.E && nextNeighbor != null)
@@ -128,6 +127,48 @@ public class HexMesh : MonoBehaviour
             Triangles.AddTriangleColor(
                 cell.color, neighbor.color, nextNeighbor.color, colors);
         }
+    }
+
+    #endregion
+
+    #region Edges
+
+    /// <summary>
+    /// Triangulates the connections of terraces of an edge
+    /// </summary>
+    /// <param name="beginLeft">startpoint left</param>
+    /// <param name="beginRight">startpoint right</param>
+    /// <param name="beginCell">start cell</param>
+    /// <param name="endLeft">endpoint left</param>
+    /// <param name="endRight">endpoint right</param>
+    /// <param name="endCell">end cell</param>
+    private void TriangulateEdgeTerraces(
+        Vector3 beginLeft, Vector3 beginRight, HexCell beginCell,
+        Vector3 endLeft, Vector3 endRight, HexCell endCell)
+    {
+        Vector3 v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
+        Vector3 v4 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, 1);
+
+        Quads.AddQuad(beginLeft, beginRight, v3, v4, vertices, triangles);
+        Quads.AddQuadColor(beginCell.color, c2, colors);
+
+        for (int i = 2; i < HexMetrics.TERRACESTEPS; i++)
+        {
+            Vector3 v1 = v3;
+            Vector3 v2 = v4;
+            Color c1 = c2;
+
+            v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
+            v4 = HexMetrics.TerraceLerp(beginRight, endRight, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, i);
+
+            Quads.AddQuad(v1, v2, v3, v4, vertices, triangles);
+            Quads.AddQuadColor(c1, c2, colors);
+        }
+
+        Quads.AddQuad(v3, v4, endLeft, endRight, vertices, triangles);
+        Quads.AddQuadColor(c2, endCell.color, colors);
     }
 
     #endregion
