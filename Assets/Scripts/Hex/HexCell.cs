@@ -70,5 +70,13 @@ public class HexCell : MonoBehaviour
     public HexEdgeType GetEdgeType(HexDirection direction) =>
         HexMetrics.GetEdgeType(elevation, neighbors[(int)direction].elevation);
 
+    /// <summary>
+    /// Returns the edgetype between any two cells
+    /// </summary>
+    /// <param name="othercell">other cell</param>
+    /// <returns></returns>
+    public HexEdgeType GetEdgeType(HexCell othercell) =>
+        HexMetrics.GetEdgeType(elevation, othercell.elevation);
+
     #endregion
 }

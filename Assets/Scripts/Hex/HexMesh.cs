@@ -130,10 +130,24 @@ public class HexMesh : MonoBehaviour
             Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
             v5.y = nextNeighbor.Elevation * HexMetrics.ELEVATIONSTEP;
 
-            Triangles.AddTriangle(
-                v2, v4, v5, vertices, triangles);
-            Triangles.AddTriangleColor(
-                cell.color, neighbor.color, nextNeighbor.color, colors);
+            // First, determine what the bottom cell is
+            //  check whether the cell being triangulated is lower than its neighbors, or tied for lowest. 
+            // If this is the case, we can use it as the bottom cell.
+            if (cell.Elevation <= neighbor.Elevation)
+            {
+                if (cell.Elevation <= nextNeighbor.Elevation)
+                    TriangulateCorner(v2, cell, v4, neighbor, v5, nextNeighbor);
+                // If the innermost check fails, it means that the next neighbor is the lowest cell. 
+                // Rotate the triangle counterclockwise to keep it correctly oriented.
+                else
+                    TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
+            }
+            // If the edge neighbor is the lowest, then we have to rotate clockwise...
+            else if (neighbor.Elevation <= nextNeighbor.Elevation)
+                TriangulateCorner(v4, neighbor, v5, nextNeighbor, v2, cell);
+            ///...otherwise, rotate counterclockwise
+            else
+                TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
         }
     }
 
@@ -177,6 +191,103 @@ public class HexMesh : MonoBehaviour
 
         Quads.AddQuad(v3, v4, endLeft, endRight, vertices, triangles);
         Quads.AddQuadColor(c2, endCell.color, colors);
+    }
+
+    #endregion
+
+    #region Corners
+
+    /// <summary>
+    /// Triangulates the corners at the side of edges
+    /// </summary>
+    /// <param name="bottom">bottom of the triangle</param>
+    /// <param name="bottomCell">cell at the bottom</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">cell to the left</param>
+    /// <param name="right">right of the triangle</param>
+    /// <param name="rightCell">cell to the right</param>
+    private void TriangulateCorner(
+        Vector3 bottom, HexCell bottomCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 right, HexCell rightCell)
+    {
+        HexEdgeType leftEdgeType = bottomCell.GetEdgeType(leftCell);
+        HexEdgeType rightEdgeType = bottomCell.GetEdgeType(rightCell);
+
+        // If both edges are slopes, then we have terraces on both the left and the right side.
+        // Also, because the bottom cell is the lowest, we know that those slopes go up. 
+        // Furthermore, this means that the left and right cell have the same elevation, 
+        // so the top edge connection is flat. We can identify this case as slope-slope-flat.
+        if (leftEdgeType == HexEdgeType.Slope)
+        {
+            if(rightEdgeType == HexEdgeType.Slope)
+            {
+                TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
+                return;
+            }
+            // If the right edge is flat, then we have to begin terracing from the left instead of the bottom
+            if (rightEdgeType == HexEdgeType.Flat)
+            {
+                TriangulateCornerTerraces(left, leftCell, right, rightCell, bottom, bottomCell);
+                return;
+            }
+        }
+        // If the left edge is flat, then we have to begin from the right.
+        if (rightEdgeType == HexEdgeType.Slope)
+        {
+            if(leftEdgeType == HexEdgeType.Flat)
+            {
+                TriangulateCornerTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
+                return;
+            }
+        }
+
+        Triangles.AddTriangle(bottom, left, right, vertices, triangles);
+        Triangles.AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color, colors);
+    }
+
+    /// <summary>
+    /// Triangulates a slope-slope-flat,
+    /// a terrace between two sloped cells
+    /// </summary>
+    /// <param name="begin">begin of the triangle</param>
+    /// <param name="beginCell">begin cell</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">left cell</param>
+    /// <param name="right">right of the triangle</param>
+    /// <param name="rightCell">right cell</param>
+    private void TriangulateCornerTerraces(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 right, HexCell rightCell)
+    {
+        Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
+        Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);
+
+        Color c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+        Color c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, 1);
+
+        Triangles.AddTriangle(begin, v3, v4, vertices, triangles);
+        Triangles.AddTriangleColor(beginCell.color, c3, c4, colors);
+
+        for(int i = 2; i < HexMetrics.TERRACESTEPS; i++)
+        {
+            Vector3 v1 = v3;
+            Vector3 v2 = v4;
+            Color c1 = c3;
+            Color c2 = c4;
+
+            v3 = HexMetrics.TerraceLerp(begin, left, i);
+            v4 = HexMetrics.TerraceLerp(begin, right, i);
+            c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+            c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, i);
+
+            Quads.AddQuad(v1, v2, v3, v4, vertices, triangles);
+            Quads.AddQuadColor(c1, c2, c3, c4, colors);
+        }
+
+        Quads.AddQuad(v3, v4, left, right, vertices, triangles);
+        Quads.AddQuadColor(c3, c4, leftCell.color, rightCell.color, colors);
     }
 
     #endregion
