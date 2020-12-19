@@ -119,6 +119,27 @@ public class HexMetrics : MonoBehaviour
         return Color.Lerp(a, b, h);
     }
 
+    /// <summary>
+    /// Compares two elevationlevels, and determines the edgetype
+    /// </summary>
+    /// <param name="elevation1">first elevation</param>
+    /// <param name="elevation2">second elevation</param>
+    /// <returns>edgetype</returns>
+    public static HexEdgeType GetEdgeType(int elevation1, int elevation2)
+    {
+        // If there's no difference, it's a flat edge
+        if (elevation1 == elevation2)
+            return HexEdgeType.Flat;
+
+        // If the elevationdifference is 1, it's a sloped edge
+        int delta = elevation2 - elevation1;
+        if (delta == 1 || delta == -1)
+            return HexEdgeType.Slope;
+
+        // If the difference is 2 or more, it's a cliff edge
+        return HexEdgeType.Cliff;
+    }
+
     #endregion
 
 }
