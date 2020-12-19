@@ -16,6 +16,15 @@ public class HexMetrics : MonoBehaviour
     public const float BLENDFACTOR = 1f - SOLIDFACTOR;
     // The height of each elevationstep
     public const float ELEVATIONSTEP = 5f;
+    // Amount of terraces on a slope
+    public const int TERRACESPERSLOPE = 2;
+    // Amount of steps on a slope (terraced and steep parts)
+    public const int TERRACESTEPS = TERRACESPERSLOPE * 2 + 1;
+    // Width of a terracestep
+    public const float HORIZONTALTERRACESTEPSIZE = 1f / TERRACESTEPS;
+    // Height of a terracestep
+    public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
+
     #endregion
 
     #region Static Fields
@@ -75,6 +84,61 @@ public class HexMetrics : MonoBehaviour
     /// <returns></returns>
     public static Vector3 GetBridge(HexDirection direction) =>
         (corners[(int)direction] + corners[(int)direction + 1]) * BLENDFACTOR;
+
+    /// <summary>
+    /// Interpolates each step along a slope
+    /// The Y-coordinate only changes on odd steps
+    /// </summary>
+    /// <param name="a">first position</param>
+    /// <param name="b">secong position</param>
+    /// <param name="step">step along the slope</param>
+    /// <returns></returns>
+    public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)
+    {
+        float h = step * HORIZONTALTERRACESTEPSIZE;
+        a.x += (b.x - a.x) * h;
+        a.z += (b.z - a.z) * h;
+
+        float v = ((step + 1) / 2) * HexMetrics.VERTICALTERRACESTEPSIZE;
+        a.y += (b.y - a.y) * v;
+
+        return a;
+    }
+
+    /// <summary>
+    /// Interpolates the colors along a slope
+    /// </summary>
+    /// <param name="a">first color</param>
+    /// <param name="b">second corner</param>
+    /// <param name="step">step along the slope</param>
+    /// <returns></returns>
+    public static Color TerraceLerp(Color a, Color b, int step)
+    {
+        float h = step * HexMetrics.HORIZONTALTERRACESTEPSIZE;
+
+        return Color.Lerp(a, b, h);
+    }
+
+    /// <summary>
+    /// Compares two elevationlevels, and determines the edgetype
+    /// </summary>
+    /// <param name="elevation1">first elevation</param>
+    /// <param name="elevation2">second elevation</param>
+    /// <returns>edgetype</returns>
+    public static HexEdgeType GetEdgeType(int elevation1, int elevation2)
+    {
+        // If there's no difference, it's a flat edge
+        if (elevation1 == elevation2)
+            return HexEdgeType.Flat;
+
+        // If the elevationdifference is 1, it's a sloped edge
+        int delta = elevation2 - elevation1;
+        if (delta == 1 || delta == -1)
+            return HexEdgeType.Slope;
+
+        // If the difference is 2 or more, it's a cliff edge
+        return HexEdgeType.Cliff;
+    }
 
     #endregion
 
