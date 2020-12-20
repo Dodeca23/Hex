@@ -221,29 +221,36 @@ public class HexMesh : MonoBehaviour
         if (leftEdgeType == HexEdgeType.Slope)
         {
             if(rightEdgeType == HexEdgeType.Slope)
-            {
                 TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
-                return;
-            }
             // If the right edge is flat, then we have to begin terracing from the left instead of the bottom
-            if (rightEdgeType == HexEdgeType.Flat)
-            {
+            else if (rightEdgeType == HexEdgeType.Flat)
                 TriangulateCornerTerraces(left, leftCell, right, rightCell, bottom, bottomCell);
-                return;
-            }
+            // If the right isn't a slope or a flat, it's a cliff
+            else
+                TriangulateCornerTerracesCliff(bottom, bottomCell, left, leftCell, right, rightCell);
         }
         // If the left edge is flat, then we have to begin from the right.
-        if (rightEdgeType == HexEdgeType.Slope)
+        else if (rightEdgeType == HexEdgeType.Slope)
         {
             if(leftEdgeType == HexEdgeType.Flat)
-            {
                 TriangulateCornerTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
-                return;
-            }
+            // Otherwise do it the other way around
+            else
+                TriangulateCornerCliffTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
         }
-
-        Triangles.AddTriangle(bottom, left, right, vertices, triangles);
-        Triangles.AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color, colors);
+        // Triangulate the cliff-cliff-slope versions
+        else if(leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            if (leftCell.Elevation < rightCell.Elevation)
+                TriangulateCornerCliffTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
+            else
+                TriangulateCornerTerracesCliff(left, leftCell, right, rightCell, bottom, bottomCell);
+        }
+        else
+        {
+            Triangles.AddTriangle(bottom, left, right, vertices, triangles);
+            Triangles.AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color, colors);
+        }
     }
 
     /// <summary>
@@ -288,6 +295,111 @@ public class HexMesh : MonoBehaviour
 
         Quads.AddQuad(v3, v4, left, right, vertices, triangles);
         Quads.AddQuadColor(c3, c4, leftCell.color, rightCell.color, colors);
+    }
+
+    /// <summary>
+    /// Triangulates a slope-cliff edge, with the cliff on the right
+    /// </summary>
+    /// <param name="begin">begin of the triangle</param>
+    /// <param name="beginCell">begin cell</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">left cell</param>
+    /// <param name="right">right of the triangle</param>
+    /// <param name="rightCell">right cell</param>
+    private void TriangulateCornerTerracesCliff(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 right, HexCell rightCell)
+    {
+        // The bottom part
+        float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+        if (b < 0)
+            b = -b;
+        Vector3 boundary = Vector3.Lerp(begin, right, b);
+        Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
+
+        TriangulateBoundaryTriangle(begin, beginCell, left, leftCell, boundary, boundaryColor);
+
+        // The top part
+        // If we have a slope, add a rotated boundary triangle.
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+            TriangulateBoundaryTriangle(left, leftCell, right, rightCell, boundary, boundaryColor);
+        // Otherwise, add a triangle
+        else
+        {
+            Triangles.AddTriangle(left, right, boundary, vertices, triangles);
+            Triangles.AddTriangleColor(leftCell.color, rightCell.color, boundaryColor, colors);
+        }
+    }
+
+    /// <summary>
+    /// Triangulates a slope-cliff edge, with the cliff on the left
+    /// </summary>
+    /// <param name="begin">begin of the triangle</param>
+    /// <param name="beginCell">begin cell</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">left cell</param>
+    /// <param name="right">right of the triangle</param>
+    /// <param name="rightCell">right cell</param>
+    private void TriangulateCornerCliffTerraces(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 right, HexCell rightCell)
+    {
+        // The bottom part
+        float b = 1f / (leftCell.Elevation - beginCell.Elevation);
+        if (b < 0)
+            b = -b;
+        Vector3 boundary = Vector3.Lerp(begin, left, b);
+        Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
+
+        TriangulateBoundaryTriangle(right, rightCell, begin, beginCell, boundary, boundaryColor);
+
+        // The top part
+        // If we have a slope, add a rotated boundary triangle.
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+            TriangulateBoundaryTriangle(left, leftCell, right, rightCell, boundary, boundaryColor);
+        // Otherwise, add a triangle
+        else
+        {
+            Triangles.AddTriangle(left, right, boundary, vertices, triangles);
+            Triangles.AddTriangleColor(leftCell.color, rightCell.color, boundaryColor, colors);
+        }
+    }
+
+    /// <summary>
+    /// Triangulates the connection between terraces and a cliff
+    /// </summary>
+    /// <param name="begin">begin of the triangle</param>
+    /// <param name="beginCell">begin cell</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">left cell</param>
+    /// <param name="boundary">boundary point along the cliff</param>
+    /// <param name="boundaryColor">color of boundary</param>
+    private void TriangulateBoundaryTriangle(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 boundary, Color boundaryColor)
+    {
+        Vector3 v2 = HexMetrics.TerraceLerp(begin, left, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+
+        Triangles.AddTriangle(begin, v2, boundary, vertices, triangles);
+        Triangles.AddTriangleColor(beginCell.color, c2, boundaryColor, colors);
+
+        for (int i = 2; i < HexMetrics.TERRACESTEPS; i++)
+        {
+            Vector3 v1 = v2;
+            Color c1 = c2;
+            v2 = HexMetrics.TerraceLerp(begin, left, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+
+            Triangles.AddTriangle(v1, v2, boundary, vertices, triangles);
+            Triangles.AddTriangleColor(c1, c2, boundaryColor, colors);
+        }
+
+        Triangles.AddTriangle(v2, left, boundary, vertices, triangles);
+        Triangles.AddTriangleColor(c2, leftCell.color, boundaryColor, colors);
     }
 
     #endregion
