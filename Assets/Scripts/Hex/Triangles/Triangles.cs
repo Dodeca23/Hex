@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Triangles
+public class Triangles : Shape
 {
     /// <summary>
     /// Adds a triangle given three vertex positions
@@ -14,9 +14,9 @@ public class Triangles
     public static void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3, List<Vector3> vertices, List<int> triangles)
     {
         int vertexIndex = vertices.Count;
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
+        vertices.Add(Perturb(v1));
+        vertices.Add(Perturb(v2));
+        vertices.Add(Perturb(v3));
 
         triangles.Add(vertexIndex);
         triangles.Add(vertexIndex + 1);

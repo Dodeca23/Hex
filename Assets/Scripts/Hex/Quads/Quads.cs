@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quads : MonoBehaviour
+public class Quads : Shape
 {
     /// <summary>
     /// Adds a quad given four verrtex position
@@ -19,10 +19,10 @@ public class Quads : MonoBehaviour
     {
         int vertexIndex = vertices.Count;
 
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
-        vertices.Add(v4);
+        vertices.Add(Perturb(v1));
+        vertices.Add(Perturb(v2));
+        vertices.Add(Perturb(v3));
+        vertices.Add(Perturb(v4));
 
         triangles.Add(vertexIndex);
         triangles.Add(vertexIndex + 2);

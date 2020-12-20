@@ -23,6 +23,9 @@ public class HexGrid : MonoBehaviour
     [Tooltip("Default color of a cell.")]
     [SerializeField]
     private Color defaultColor = default;
+    [Tooltip("The noise texture used for adding distortion to the grid of cells.")]
+    [SerializeField]
+    private Texture2D noiseSource = default;
 
     private Canvas gridCanvas;                          // reference to the child's canvas component
     private HexMesh hexMesh;                            // reference to the hexmesh component
@@ -34,6 +37,7 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
+        HexMetrics.noiseSource = noiseSource;
         gridCanvas = GetComponentInChildren<Canvas>();
         hexMesh = GetComponentInChildren<HexMesh>();
 
@@ -49,6 +53,13 @@ public class HexGrid : MonoBehaviour
         }
 
     }
+
+    private void OnEnable()
+    {
+        // Reassign the noise texture on enabling
+        HexMetrics.noiseSource = noiseSource;
+    }
+
     private void Start()
     {
         hexMesh.Triangulate(cells);

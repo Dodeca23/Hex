@@ -367,7 +367,7 @@ MonoBehaviour:
   colors:
   - {r: 1, g: 1, b: 0, a: 0}
   - {r: 0, g: 1, b: 0, a: 0}
-  - {r: 0, g: 0, b: 1, a: 0}
+  - {r: 0, g: 0.47009897, b: 1, a: 0}
   - {r: 1, g: 1, b: 1, a: 0}
   hexGrid: {fileID: 428331826}
   elevationLevelText: {fileID: 274584064}
@@ -485,6 +485,7 @@ MonoBehaviour:
   cellPrefab: {fileID: 1598408919628400868, guid: 9b02386ea156285468f7ccd7d1281c74, type: 3}
   cellLabelPrefab: {fileID: 1799331601223109711, guid: 605a36c198e0f1a42a762221f67e65dc, type: 3}
   defaultColor: {r: 1, g: 0.9858491, b: 0.9858491, a: 0}
+  noiseSource: {fileID: 2800000, guid: b4ce674f6015204448edf26062d6d05f, type: 3}
 --- !u!4 &428331827
 Transform:
   m_ObjectHideFlags: 0

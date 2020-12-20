@@ -24,10 +24,17 @@ public class HexMetrics : MonoBehaviour
     public const float HORIZONTALTERRACESTEPSIZE = 1f / TERRACESTEPS;
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
+    // Strength of the noise that is applied
+    public const float CELLPERTURBSTRENGTH = 5f;
+    // Scale the noisesample so it covers a larger area
+    public const float NOISESCALE = 0.003f;
 
     #endregion
 
     #region Static Fields
+
+    // stores the noise texture that is used to distort the shape of hexcells
+    public static Texture2D noiseSource;
 
     // Defines the six corners relative to the cell's center
     private static Vector3[] corners =
@@ -139,6 +146,14 @@ public class HexMetrics : MonoBehaviour
         // If the difference is 2 or more, it's a cliff edge
         return HexEdgeType.Cliff;
     }
+
+    /// <summary>
+    /// Takes a worldposition and produces a 4d vector containing the noise samples
+    /// </summary>
+    /// <param name="position">world position</param>
+    /// <returns></returns>
+    public static Vector4 SampleNoise(Vector3 position) =>
+        noiseSource.GetPixelBilinear(position.x * NOISESCALE, position.z * NOISESCALE);
 
     #endregion
 
