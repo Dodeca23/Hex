@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\MapEditing\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\Grid\HexCoordinates.cs" />
     <Compile Include="Assets\Scripts\Hex\HexDirection.cs" />
+    <Compile Include="Assets\Scripts\Hex\Shape.cs" />
     <Compile Include="Assets\Scripts\Hex\HexCell.cs" />
     <Compile Include="Assets\Scripts\Hex\HexMesh.cs" />
     <Compile Include="Assets\Scripts\Hex\Quads\Quads.cs" />
@@ -66,7 +67,7 @@
     <Compile Include="Assets\Scripts\Metrics\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\Hex\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\Hex\Triangles\Triangles.cs" />
-    <Compile Include="Assets\Scripts\Hex\Shape.cs" />
+    <Compile Include="Assets\Scripts\Hex\EdgeVertices.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Materials\Shaders\VertexColors.shader" />

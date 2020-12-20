@@ -8,7 +8,6 @@ public class Shape
     {
         Vector4 sample = HexMetrics.SampleNoise(position);
         position.x += (sample.x * 2f - 1f) * HexMetrics.CELLPERTURBSTRENGTH;
-        position.y += (sample.y * 2f - 1f) * HexMetrics.CELLPERTURBSTRENGTH;
         position.z += (sample.z * 2f - 1f) * HexMetrics.CELLPERTURBSTRENGTH;
 
         return position;

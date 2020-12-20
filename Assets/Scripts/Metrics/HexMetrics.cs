@@ -26,6 +26,8 @@ public class HexMetrics : MonoBehaviour
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
     public const float CELLPERTURBSTRENGTH = 5f;
+    // Strength of the noise that is applied vertically
+    public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scale the noisesample so it covers a larger area
     public const float NOISESCALE = 0.003f;
 
