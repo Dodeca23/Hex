@@ -11,11 +11,11 @@ public class HexMetrics : MonoBehaviour
     // Stores the inner radius at which the centers of each edge will be
     public const float INNERRADIUS = OUTERRADIUS * 0.866025404f;
     // Part of te cell that is not blended
-    public const float SOLIDFACTOR = 0.75f;
+    public const float SOLIDFACTOR = 0.8f;
     // Part of the cell that is blended
     public const float BLENDFACTOR = 1f - SOLIDFACTOR;
     // The height of each elevationstep
-    public const float ELEVATIONSTEP = 5f;
+    public const float ELEVATIONSTEP = 3f;
     // Amount of terraces on a slope
     public const int TERRACESPERSLOPE = 2;
     // Amount of steps on a slope (terraced and steep parts)
@@ -25,7 +25,7 @@ public class HexMetrics : MonoBehaviour
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
-    public const float CELLPERTURBSTRENGTH = 5f;
+    public const float CELLPERTURBSTRENGTH = 4f;
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scale the noisesample so it covers a larger area

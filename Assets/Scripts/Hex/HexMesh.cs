@@ -146,6 +146,41 @@ public class HexMesh : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Triangulates the connection between terraces and a cliff
+    /// </summary>
+    /// <param name="begin">begin of the triangle</param>
+    /// <param name="beginCell">begin cell</param>
+    /// <param name="left">left of the triangle</param>
+    /// <param name="leftCell">left cell</param>
+    /// <param name="boundary">boundary point along the cliff</param>
+    /// <param name="boundaryColor">color of boundary</param>
+    private void TriangulateBoundaryTriangle(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 boundary, Color boundaryColor)
+    {
+        Vector3 v2 = Shape.Perturb(HexMetrics.TerraceLerp(begin, left, 1));
+        Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+
+        Triangles.AddTriangleUnperturbed(Shape.Perturb(begin), v2, boundary, vertices, triangles);
+        Triangles.AddTriangleColor(beginCell.color, c2, boundaryColor, colors);
+
+        for (int i = 2; i < HexMetrics.TERRACESTEPS; i++)
+        {
+            Vector3 v1 = v2;
+            Color c1 = c2;
+            v2 = Shape.Perturb(HexMetrics.TerraceLerp(begin, left, i));
+            c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+
+            Triangles.AddTriangleUnperturbed(v1, v2, boundary, vertices, triangles);
+            Triangles.AddTriangleColor(c1, c2, boundaryColor, colors);
+        }
+
+        Triangles.AddTriangleUnperturbed(v2, Shape.Perturb(left), boundary, vertices, triangles);
+        Triangles.AddTriangleColor(c2, leftCell.color, boundaryColor, colors);
+    }
+
     #endregion
 
     #region Edges
@@ -337,7 +372,7 @@ public class HexMesh : MonoBehaviour
         float b = 1f / (rightCell.Elevation - beginCell.Elevation);
         if (b < 0)
             b = -b;
-        Vector3 boundary = Vector3.Lerp(begin, right, b);
+        Vector3 boundary = Vector3.Lerp(Shape.Perturb(begin), Shape.Perturb(right), b);
         Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
 
         TriangulateBoundaryTriangle(begin, beginCell, left, leftCell, boundary, boundaryColor);
@@ -349,7 +384,7 @@ public class HexMesh : MonoBehaviour
         // Otherwise, add a triangle
         else
         {
-            Triangles.AddTriangle(left, right, boundary, vertices, triangles);
+            Triangles.AddTriangleUnperturbed(Shape.Perturb(left), Shape.Perturb(right), boundary, vertices, triangles);
             Triangles.AddTriangleColor(leftCell.color, rightCell.color, boundaryColor, colors);
         }
     }
@@ -372,7 +407,7 @@ public class HexMesh : MonoBehaviour
         float b = 1f / (leftCell.Elevation - beginCell.Elevation);
         if (b < 0)
             b = -b;
-        Vector3 boundary = Vector3.Lerp(begin, left, b);
+        Vector3 boundary = Vector3.Lerp(Shape.Perturb(begin),Shape.Perturb(left), b);
         Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
 
         TriangulateBoundaryTriangle(right, rightCell, begin, beginCell, boundary, boundaryColor);
@@ -384,45 +419,10 @@ public class HexMesh : MonoBehaviour
         // Otherwise, add a triangle
         else
         {
-            Triangles.AddTriangle(left, right, boundary, vertices, triangles);
+            Triangles.AddTriangleUnperturbed(Shape.Perturb(left), Shape.Perturb(right), boundary, vertices, triangles);
             Triangles.AddTriangleColor(leftCell.color, rightCell.color, boundaryColor, colors);
         }
-    }
-
-    /// <summary>
-    /// Triangulates the connection between terraces and a cliff
-    /// </summary>
-    /// <param name="begin">begin of the triangle</param>
-    /// <param name="beginCell">begin cell</param>
-    /// <param name="left">left of the triangle</param>
-    /// <param name="leftCell">left cell</param>
-    /// <param name="boundary">boundary point along the cliff</param>
-    /// <param name="boundaryColor">color of boundary</param>
-    private void TriangulateBoundaryTriangle(
-        Vector3 begin, HexCell beginCell,
-        Vector3 left, HexCell leftCell,
-        Vector3 boundary, Color boundaryColor)
-    {
-        Vector3 v2 = HexMetrics.TerraceLerp(begin, left, 1);
-        Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
-
-        Triangles.AddTriangle(begin, v2, boundary, vertices, triangles);
-        Triangles.AddTriangleColor(beginCell.color, c2, boundaryColor, colors);
-
-        for (int i = 2; i < HexMetrics.TERRACESTEPS; i++)
-        {
-            Vector3 v1 = v2;
-            Color c1 = c2;
-            v2 = HexMetrics.TerraceLerp(begin, left, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
-
-            Triangles.AddTriangle(v1, v2, boundary, vertices, triangles);
-            Triangles.AddTriangleColor(c1, c2, boundaryColor, colors);
-        }
-
-        Triangles.AddTriangle(v2, left, boundary, vertices, triangles);
-        Triangles.AddTriangleColor(c2, leftCell.color, boundaryColor, colors);
-    }
+    }    
 
     #endregion
 }

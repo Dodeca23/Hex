@@ -5,7 +5,7 @@ using UnityEngine;
 public class Quads : Shape
 {
     /// <summary>
-    /// Adds a quad given four verrtex position
+    /// Adds a distorted quad given four verrtex position
     /// </summary>
     /// <param name="v1">first vertex</param>
     /// <param name="v2">second vertexparam>
@@ -32,6 +32,33 @@ public class Quads : Shape
         triangles.Add(vertexIndex + 3);
     }
 
+    /// <summary>
+    /// Adds a quad given four verrtex position
+    /// </summary>
+    /// <param name="v1">first vertex</param>
+    /// <param name="v2">second vertexparam>
+    /// <param name="v3">third vertex</param>
+    /// <param name="v4">fourth vertex</param>
+    /// <param name="vertices">list of vertices</param>
+    /// <param name="triangles">list of triangles</param>
+    public static void AddQuadUnperturbed(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
+        List<Vector3> vertices, List<int> triangles)
+    {
+        int vertexIndex = vertices.Count;
+
+        vertices.Add(v1);
+        vertices.Add(v2);
+        vertices.Add(v3);
+        vertices.Add(v4);
+
+        triangles.Add(vertexIndex);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 3);
+    }
     /// <summary>
     /// Adds the color data to a single quad
     /// </summary>
