@@ -37,6 +37,13 @@ public class HexGrid : MonoBehaviour
 
     #endregion
 
+    #region Properties
+
+    public int ChunkCountX => chunkCountX;
+    public int ChunkCountZ => chunkCountZ;
+
+    #endregion
+
     #region MonoBehaviors
 
     private void Awake()
