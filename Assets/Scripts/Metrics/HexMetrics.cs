@@ -6,6 +6,10 @@ public class HexMetrics : MonoBehaviour
 {
     #region Constants
 
+    // Size of a single chunk
+    public const int CHUNKSIZEX = 5;
+    public const int CHUNKSIZEZ = 5;
+
     // Stores the outer radius, at which the corners of the hexagon will be
     public const float OUTERRADIUS = 10f; 
     // Stores the inner radius at which the centers of each edge will be

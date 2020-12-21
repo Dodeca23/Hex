@@ -13,8 +13,9 @@ public class HexCell : MonoBehaviour
     public HexCoordinates coordinates;                          // stores the coordinate of a cell
     public Color color;                                         // stores the color of a cell
     public RectTransform uiRect;                               // stores the ui label of cell
+    public HexGridChunk chunk;
 
-    private int elevation;                                      // stores the elevationlevel of a cell
+    private int elevation = int.MinValue;                     // stores the elevationlevel of a cell
 
     #endregion
 
@@ -28,6 +29,9 @@ public class HexCell : MonoBehaviour
         get => elevation;
         set
         {
+            if (elevation == value)
+                return;
+
             elevation = value;
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.ELEVATIONSTEP;
@@ -39,6 +43,25 @@ public class HexCell : MonoBehaviour
             Vector3 uiPosition = uiRect.localPosition;
             uiPosition.z = -position.y;
             uiRect.localPosition = uiPosition;
+
+            Refresh();
+        }
+    }
+
+    public Color Color
+    {
+        get
+        {
+            return color;
+        }
+        set
+        {
+            if (color == value)
+            {
+                return;
+            }
+            color = value;
+            Refresh();
         }
     }
 
@@ -87,4 +110,20 @@ public class HexCell : MonoBehaviour
         HexMetrics.GetEdgeType(elevation, othercell.elevation);
 
     #endregion
+
+    void Refresh()
+    {
+        if(chunk)
+            chunk.Refresh();
+
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            HexCell neighbor = neighbors[i];
+            if (neighbor != null && neighbor.chunk != chunk)
+            {
+                neighbor.chunk.Refresh();
+            }
+        }
+    }
 }
+

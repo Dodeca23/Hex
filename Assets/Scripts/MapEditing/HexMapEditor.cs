@@ -40,7 +40,7 @@ public class HexMapEditor : MonoBehaviour
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit) && !EventSystem.current.IsPointerOverGameObject())
-           EditCell(hexGrid.GetCell(hit.point));
+            EditCell(hexGrid.GetCell(hit.point));
     }
 
     #endregion
@@ -49,9 +49,8 @@ public class HexMapEditor : MonoBehaviour
 
     private void EditCell(HexCell cell)
     {
-        cell.color = activeColor;
+        cell.Color = activeColor;
         cell.Elevation = activeElevation;
-        hexGrid.Refresh();
     }
 
     /// <summary>
