@@ -31,7 +31,7 @@ public class HexMapEditor : MonoBehaviour
     private int activeElevation;                    // currently applied elevation 
     private int brushSize;                          // size of the brush to edit cells
 
-    private bool applyColor;                        // should colors be applied?
+    private bool applyColor;                        // should terrain.Colors be applied?
     private bool applyElevation = true;             // should elevation be used?
     private bool isDrag;                            // is there a valid drag?
 
@@ -144,7 +144,7 @@ public class HexMapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// Selects a color based on its index in the list of available colors
+    /// Selects a color based on its index in the list of available terrain.Colors
     /// </summary>
     /// <param name="index">color index</param>
     public void SelectColor(int index)

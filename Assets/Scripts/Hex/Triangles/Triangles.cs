@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Triangles : Shape
+public class Triangles : CustomMesh
 {
     /// <summary>
     /// Adds a distorted triangle given three vertex positions

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quads : Shape
+public class Quads : CustomMesh
 {
     /// <summary>
     /// Adds a distorted quad given four verrtex position

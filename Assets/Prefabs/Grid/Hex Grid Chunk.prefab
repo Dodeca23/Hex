@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b80045ef9a503564097be6620712d85d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 1368098127344326378}
 --- !u!1 &7095611622937439490
 GameObject:
   m_ObjectHideFlags: 0

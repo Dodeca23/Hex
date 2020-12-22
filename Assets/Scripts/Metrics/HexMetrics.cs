@@ -126,7 +126,7 @@ public class HexMetrics
     }
 
     /// <summary>
-    /// Interpolates the colors along a slope
+    /// Interpolates the terrain.Colors along a slope
     /// </summary>
     /// <param name="a">first color</param>
     /// <param name="b">second corner</param>
