@@ -172,6 +172,11 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns a cell based on its world position
+    /// </summary>
+    /// <param name="position">position</param>
+    /// <returns></returns>
     public HexCell GetCell(Vector3 position)
     {
         position = transform.InverseTransformPoint(position);
@@ -179,6 +184,36 @@ public class HexGrid : MonoBehaviour
 
         int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
         return cells[index];
+    }
+
+    /// <summary>
+    /// Returns a cell based on its coordinates
+    /// </summary>
+    /// <param name="coordinates">coordinates</param>
+    /// <returns></returns>
+    public HexCell GetCell(HexCoordinates coordinates)
+    {
+        int z = coordinates.Z;
+        if (z < 0 || z >= cellCountZ)
+            return null;
+
+        int x = coordinates.X + z / 2;
+        if (x < 0 || x >= cellCountX)
+            return null;
+
+        return cells[x + z * cellCountX];
+    }
+
+    #endregion
+
+    #region UI
+
+    public void ShowUI(bool visible)
+    {
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].ShowUI(visible);
+        }
     }
 
     #endregion
