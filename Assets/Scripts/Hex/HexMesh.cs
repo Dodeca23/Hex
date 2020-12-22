@@ -95,6 +95,8 @@ public class HexMesh : MonoBehaviour
                 else
                     TriangulateWithRiver(direction, cell, center, e);
             }
+            else
+                TriangulateAdjacentToRiver(direction, cell, center, e);
         }
         else
             TriangulateEdgeFan(center, e, cell.Color);
@@ -524,6 +526,43 @@ public class HexMesh : MonoBehaviour
             Vector3.Lerp(center, e.v5, 0.5f));
 
         m.v3.y = e.v3.y;
+
+        TriangulateEdgeStrip(m, cell.color, e, cell.color);
+        TriangulateEdgeFan(center, m, cell.color);
+    }
+
+    /// <summary>
+    /// Triangulate te cell part directly next to a river
+    /// </summary>
+    /// <param name="direction">direction</param>
+    /// <param name="cell">cell</param>
+    /// <param name="center">center of cell</param>
+    /// <param name="e">edge</param>
+    private void TriangulateAdjacentToRiver(
+        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e)
+    {
+        // Check whether we're on the inside of a curve
+        // If so, move the center towards the edge.
+        if (cell.HasRiverThroughEdge(direction.Next()))
+        {
+            if (cell.HasRiverThroughEdge(direction.Previous()))
+                center += HexMetrics.GetSolidEdgeMiddle(direction) * (HexMetrics.INNERTOOUTER * 0.5f);
+            // check whether it's a straight river. If so, move the center towards our first solid corner.
+            else if (cell.HasRiverThroughEdge(direction.Previous2()))
+                center += HexMetrics.GetFirstSolidCorner(direction) * 0.25f;
+        }
+        // When we have a river in the previous direction, and it is a straight one, 
+        // it required moving the center towards the next solid corner.
+        else if (
+            cell.HasRiverThroughEdge(direction.Previous()) &&
+            cell.HasRiverThroughEdge(direction.Next2()))
+        {
+            center += HexMetrics.GetSecondSolidCorner(direction) * 0.25f;
+        }
+
+        EdgeVertices m = new EdgeVertices(
+            Vector3.Lerp(center, e.v1, 0.5f),
+            Vector3.Lerp(center, e.v5, 0.5f));
 
         TriangulateEdgeStrip(m, cell.color, e, cell.color);
         TriangulateEdgeFan(center, m, cell.color);
