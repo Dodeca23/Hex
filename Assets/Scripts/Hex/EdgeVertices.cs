@@ -20,6 +20,21 @@ public struct EdgeVertices
     }
 
     /// <summary>
+    /// Constructs an edge using a flexible interpolator
+    /// </summary>
+    /// <param name="corner1">first corner</param>
+    /// <param name="corner2">second corner</param>
+    /// <param name="outerStep">interpolator</param>
+    public EdgeVertices(Vector3 corner1, Vector3 corner2, float outerStep)
+    {
+        v1 = corner1;
+        v2 = Vector3.Lerp(corner1, corner2, outerStep);
+        v3 = Vector3.Lerp(corner1, corner2, 0.5f);
+        v4 = Vector3.Lerp(corner1, corner2, 1f - outerStep);
+        v5 = corner2;
+    }
+
+    /// <summary>
     /// Performs the terrace interpolation between
     /// al pairs of two edgevertices
     /// </summary>

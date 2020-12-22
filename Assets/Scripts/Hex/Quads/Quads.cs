@@ -89,6 +89,14 @@ public class Quads : Shape
         colors.Add(c2);
         colors.Add(c2);
     }
+
+    public static void AddQuadColor(Color color, List<Color> colors)
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
 }
 
 

@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HexMetrics : MonoBehaviour
+public class HexMetrics 
 {
     #region Constants
 
@@ -10,10 +11,14 @@ public class HexMetrics : MonoBehaviour
     public const int CHUNKSIZEX = 5;
     public const int CHUNKSIZEZ = 5;
 
+    // Converts from he outer to inner radius
+    public const float OUTERTOINNER = 0.866025404f;
+    // Converts from the inner to outer radius
+    public const float INNERTOOUTER = 1f / OUTERTOINNER;
     // Stores the outer radius, at which the corners of the hexagon will be
     public const float OUTERRADIUS = 10f; 
     // Stores the inner radius at which the centers of each edge will be
-    public const float INNERRADIUS = OUTERRADIUS * 0.866025404f;
+    public const float INNERRADIUS = OUTERRADIUS * OUTERTOINNER;
     // Part of te cell that is not blended
     public const float SOLIDFACTOR = 0.8f;
     // Part of the cell that is blended
@@ -29,7 +34,7 @@ public class HexMetrics : MonoBehaviour
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
-    public const float CELLPERTURBSTRENGTH = 4f;
+    public const float CELLPERTURBSTRENGTH = 0f;
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scales the noisesample so it covers a larger area
@@ -162,6 +167,15 @@ public class HexMetrics : MonoBehaviour
     /// <returns></returns>
     public static Vector4 SampleNoise(Vector3 position) =>
         noiseSource.GetPixelBilinear(position.x * NOISESCALE, position.z * NOISESCALE);
+
+    /// <summary>
+    /// Returns the average of two adjacent corner vectors
+    /// </summary>
+    /// <param name="direction">direction</param>
+    /// <returns></returns>
+    public static Vector3 GetSolidEdgeMiddle(HexDirection direction) =>
+        (corners[(int)direction] + corners[(int)direction + 1]) *
+        (0.5f * SOLIDFACTOR);
 
     #endregion
 
