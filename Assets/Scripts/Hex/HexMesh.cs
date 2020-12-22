@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -10,12 +11,14 @@ public class HexMesh : MonoBehaviour
 {
     #region Fields
 
-    private static List<Vector3> vertices =
-        new List<Vector3>();                    // stores the vertices of the mesh
-    private static List<int> triangles =
-        new List<int>();                        // stores the terrain.Triangles of the mesh
-    private static List<Color> colors =
-        new List<Color>();                      // stores the possible terrain.Colors of the mesh
+    public bool useCollider;
+    public bool useColors;
+    public bool useUVCoordinates;
+
+    [NonSerialized] List<Vector3> vertices;     // stores the vertices of the mesh
+    [NonSerialized] List<int> triangles;        // stores the triangles of the mesh
+    [NonSerialized] List<Color> colors;         // stores the possible colors of the mesh
+    [NonSerialized] List<Vector2> uvs;          // stores the uv coords of the mesh
 
     private Mesh hexMesh;                       // referene to te mesh component
 
@@ -37,7 +40,8 @@ public class HexMesh : MonoBehaviour
     private void Awake()
     {
         hexMesh = GetComponent<MeshFilter>().mesh = new Mesh();
-        collider = gameObject.AddComponent<MeshCollider>();
+        if(useCollider)
+            collider = gameObject.AddComponent<MeshCollider>();
         hexMesh.name = "Hex Mesh";
     }
 
@@ -47,20 +51,37 @@ public class HexMesh : MonoBehaviour
     public void Clear()
     {
         hexMesh.Clear();
-        vertices.Clear();
-        colors.Clear();
-        triangles.Clear();
+        vertices = ListPool<Vector3>.Get();
+        if(useColors)
+            colors = ListPool<Color>.Get();
+        if (useUVCoordinates)
+            uvs = ListPool<Vector2>.Get();
+        triangles = ListPool<int>.Get();
     }
 
     public void Apply()
     {
         hexMesh.SetVertices(vertices);
-        hexMesh.SetColors(colors);
+        ListPool<Vector3>.Add(vertices);
+
+        if(useColors)
+        {
+            hexMesh.SetColors(colors);
+            ListPool<Color>.Add(colors);
+        }
+
+        if (useUVCoordinates)
+        {
+            hexMesh.SetUVs(0, uvs);
+            ListPool<Vector2>.Add(uvs);
+        }
+
         hexMesh.SetTriangles(triangles, 0);
+        ListPool<int>.Add(triangles);
         hexMesh.RecalculateNormals();
-        collider.sharedMesh = hexMesh;
+        if(useCollider)
+            collider.sharedMesh = hexMesh;
     }
 
     #endregion
-
 }

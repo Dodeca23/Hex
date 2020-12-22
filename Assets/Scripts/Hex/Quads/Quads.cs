@@ -90,12 +90,49 @@ public class Quads : CustomMesh
         colors.Add(c2);
     }
 
+    /// <summary>
+    /// Adds a single color to a single quad
+    /// </summary>
+    /// <param name="color">color</param>
+    /// /// <param name="colors">list of possible colors</param>
     public static void AddQuadColor(Color color, List<Color> colors)
     {
         colors.Add(color);
         colors.Add(color);
         colors.Add(color);
         colors.Add(color);
+    }
+
+    /// <summary>
+    /// Adds uv coord to each vertex of a quad
+    /// </summary>
+    /// <param name="uv1">first uv</param>
+    /// <param name="uv2">second uv</param>
+    /// <param name="uv3">third uv</param>
+    /// <param name="uv4">fourth uv</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4, List<Vector2> uvs)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
+        uvs.Add(uv4);
+    }
+
+    /// <summary>
+    /// Adds a rectangular uv area to a quad
+    /// </summary>
+    /// <param name="uMin">first corner</param>
+    /// <param name="uMax">second corner</param>
+    /// <param name="vMin">third corner</param>
+    /// <param name="vMax">fourth corner</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddQuadUV(float uMin, float uMax, float vMin, float vMax, List<Vector2> uvs)
+    {
+        uvs.Add(new Vector2(uMin, vMin));
+        uvs.Add(new Vector2(uMax, vMin));
+        uvs.Add(new Vector2(uMin, vMax));
+        uvs.Add(new Vector2(uMax, vMax));
     }
 }
 

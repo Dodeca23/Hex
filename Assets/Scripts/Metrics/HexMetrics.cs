@@ -34,7 +34,7 @@ public class HexMetrics
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
-    public const float CELLPERTURBSTRENGTH = 0f;
+    public const float CELLPERTURBSTRENGTH = 0f; // 4f
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scales the noisesample so it covers a larger area
