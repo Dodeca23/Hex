@@ -32,8 +32,10 @@ public class HexMetrics : MonoBehaviour
     public const float CELLPERTURBSTRENGTH = 4f;
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
-    // Scale the noisesample so it covers a larger area
+    // Scales the noisesample so it covers a larger area
     public const float NOISESCALE = 0.003f;
+    // Defines the vertical elevation of the streambed
+    public const float STREAMBEDELEVATIONOFFSET = -1f;
 
     #endregion
 

@@ -114,6 +114,12 @@ public class HexCell : MonoBehaviour
     /// Returns whether the cell has a begin or endpoint for a river
     /// </summary>
     public bool HasRiverBeginOrEnd => hasIncomingRiver != hasOutgoingRiver;
+
+    /// <summary>
+    /// Retrieves the vertical position of the cell's streambed
+    /// </summary>
+    public float StreamBedY =>
+        (elevation + HexMetrics.STREAMBEDELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
     
     #endregion
 

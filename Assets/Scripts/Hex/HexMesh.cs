@@ -84,6 +84,9 @@ public class HexMesh : MonoBehaviour
         center + HexMetrics.GetFirstSolidCorner(direction),
         center + HexMetrics.GetSecondSolidCorner(direction));
 
+        if (cell.HasRiverThroughEdge(direction))
+            e.v3.y = cell.StreamBedY;
+
         TriangulateEdgeFan(center, e, cell.Color);
 
         if(direction <= HexDirection.SE)
@@ -112,7 +115,10 @@ public class HexMesh : MonoBehaviour
         Vector3 bridge = HexMetrics.GetBridge(direction);
         bridge.y = neighbor.Position.y - cell.Position.y;
         EdgeVertices e2 = new EdgeVertices(
-            e1.v1 + bridge, e1.v4 + bridge);
+            e1.v1 + bridge, e1.v5 + bridge);
+
+        if (cell.HasRiverThroughEdge(direction))
+            e2.v3.y = neighbor.StreamBedY;
 
         // Only create terraces for sloped edges
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
@@ -123,7 +129,7 @@ public class HexMesh : MonoBehaviour
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
         if(direction <= HexDirection.E && nextNeighbor != null)
         {
-            Vector3 v5 = e1.v4 + HexMetrics.GetBridge(direction.Next());
+            Vector3 v5 = e1.v5 + HexMetrics.GetBridge(direction.Next());
             v5.y = nextNeighbor.Position.y;
 
             // First, determine what the bottom cell is
@@ -132,18 +138,18 @@ public class HexMesh : MonoBehaviour
             if (cell.Elevation <= neighbor.Elevation)
             {
                 if (cell.Elevation <= nextNeighbor.Elevation)
-                    TriangulateCorner(e1.v4, cell, e2.v4, neighbor, v5, nextNeighbor);
+                    TriangulateCorner(e1.v5, cell, e2.v5, neighbor, v5, nextNeighbor);
                 // If the innermost check fails, it means that the next neighbor is the lowest cell. 
                 // Rotate the triangle counterclockwise to keep it correctly oriented.
                 else
-                    TriangulateCorner(v5, nextNeighbor, e1.v4, cell, e2.v4, neighbor);
+                    TriangulateCorner(v5, nextNeighbor, e1.v5, cell, e2.v5, neighbor);
             }
             // If the edge neighbor is the lowest, then we have to rotate clockwise...
             else if (neighbor.Elevation <= nextNeighbor.Elevation)
-                TriangulateCorner(e2.v4, neighbor, v5, nextNeighbor, e1.v4, cell);
+                TriangulateCorner(e2.v5, neighbor, v5, nextNeighbor, e1.v5, cell);
             ///...otherwise, rotate counterclockwise
             else
-                TriangulateCorner(v5, nextNeighbor, e1.v4, cell, e2.v4, neighbor);
+                TriangulateCorner(v5, nextNeighbor, e1.v5, cell, e2.v5, neighbor);
         }
     }
 
@@ -230,6 +236,8 @@ public class HexMesh : MonoBehaviour
         Triangles.AddTriangleColor(color, colors);
         Triangles.AddTriangle(center, edge.v3, edge.v4, vertices, triangles);
         Triangles.AddTriangleColor(color, colors);
+        Triangles.AddTriangle(center, edge.v4, edge.v5, vertices, triangles);
+        Triangles.AddTriangleColor(color, colors);
     }
 
     /// <summary>
@@ -248,6 +256,8 @@ public class HexMesh : MonoBehaviour
         Quads.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3, vertices, triangles);
         Quads.AddQuadColor(c1, c2, colors);
         Quads.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4, vertices, triangles);
+        Quads.AddQuadColor(c1, c2, colors);
+        Quads.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5, vertices, triangles);
         Quads.AddQuadColor(c1, c2, colors);
     }
 
