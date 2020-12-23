@@ -34,13 +34,13 @@ public class HexMetrics
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
-    public const float CELLPERTURBSTRENGTH = 0f; // 4f
+    public const float CELLPERTURBSTRENGTH = 4f;
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scales the noisesample so it covers a larger area
     public const float NOISESCALE = 0.003f;
     // Defines the vertical elevation of the streambed
-    public const float STREAMBEDELEVATIONOFFSET = -1f;
+    public const float STREAMBEDELEVATIONOFFSET = -1.75f;
     // Defines the vertical elevation of a river surface
     public const float RIVERSURFACEELEVATIONOFFSET = -0.5f;
     #endregion

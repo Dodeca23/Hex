@@ -156,7 +156,7 @@ public class HexGridChunk : MonoBehaviour
         {
             e2.v3.y = neighbor.StreamBedY;
             TriangulateRiverQuad(
-                e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbor.RiverSurfaceY,
+                e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbor.RiverSurfaceY, 0.8f,
                 cell.HasIncomingRiver &&
                 cell.IncomingRiver == direction);
         }
@@ -541,8 +541,8 @@ public class HexGridChunk : MonoBehaviour
         Triangles.AddTriangleColor(cell.color, terrain.Colors);
 
         bool reversed = cell.IncomingRiver == direction;
-        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, reversed);
-        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed);
+        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, 0.4f, reversed);
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
     }
 
     /// <summary>
@@ -565,14 +565,14 @@ public class HexGridChunk : MonoBehaviour
         TriangulateEdgeFan(center, m, cell.color);
 
         bool reversed = cell.HasIncomingRiver;
-        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed);
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
 
         center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
         Triangles.AddTriangle(center, m.v2, m.v4, rivers.Vertices, rivers.Triangles);
         if (reversed)
-            Triangles.AddTriangleUV(new Vector2(0.5f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f), rivers.Uvs);
+            Triangles.AddTriangleUV(new Vector2(0.5f, 0.4f), new Vector2(1f, 0.2f), new Vector2(0f, 0.2f), rivers.Uvs);
         else
-            Triangles.AddTriangleUV(new Vector2(0.5f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f), rivers.Uvs);
+            Triangles.AddTriangleUV(new Vector2(0.5f, 0.4f), new Vector2(0f, 0.6f), new Vector2(1f, 0.6f), rivers.Uvs);
     }
 
     /// <summary>
@@ -621,18 +621,19 @@ public class HexGridChunk : MonoBehaviour
     /// <param name="v4">fourth vertex</param>
     /// <param name="y1">first vertical position</param>
     /// <param name="y2">second vertical position</param>
+    /// <param name="v">V coordinate</param>
     /// <param name="reversed">is the riverflow reversed?</param>
     private void TriangulateRiverQuad(
-        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y1, float y2, bool reversed)
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y1, float y2, float v, bool reversed)
     {
         // Elevation of each vertex is the same 
         v1.y = v2.y = y1;
         v3.y = v4.y = y2;
         Quads.AddQuad(v1, v2, v3, v4, rivers.Vertices, rivers.Triangles);
         if (reversed)
-            Quads.AddQuadUV(1f, 0f, 1f, 0f, rivers.Uvs);
+            Quads.AddQuadUV(1f, 0f, 0.8f - v, 0.6f - v, rivers.Uvs);
         else
-            Quads.AddQuadUV(0f, 1f, 0f, 1f, rivers.Uvs);
+            Quads.AddQuadUV(0f, 1f, v, v + 0.2f, rivers.Uvs);
     }
 
     /// <summary>
@@ -643,11 +644,12 @@ public class HexGridChunk : MonoBehaviour
     /// <param name="v3">third vertex</param>
     /// <param name="v4">fourth vertex</param>
     /// <param name="y">vertical position</param>
+    /// <param name="v">V coordinate</param>
     /// <param name="reversed">is the riverflow reversed?</param>
     private void TriangulateRiverQuad(
-        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y, bool reversed)
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y, float v, bool reversed)
     {
-        TriangulateRiverQuad(v1, v2, v3, v4, y, y, reversed);
+        TriangulateRiverQuad(v1, v2, v3, v4, y, y, v, reversed);
     }
 
     #endregion
