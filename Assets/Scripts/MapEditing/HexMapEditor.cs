@@ -18,13 +18,24 @@ public class HexMapEditor : MonoBehaviour
     [SerializeField]
     private Text brushSizeText = default;
 
+    private enum OptionalToggle
+    {
+        Ignore, Yes, No
+    }
+
+    private OptionalToggle riverMode;               // checks the different modes for applying a river
+    private OptionalToggle roadMode;                // checks the different modes for applying a road
+
     private Color activeColor;                      // currently applied color
+    private HexDirection dragDirection;             // direction of a drag
+    private HexCell previousCell;                   // previous cell during a drag
 
     private int activeElevation;                    // currently applied elevation 
     private int brushSize;                          // size of the brush to edit cells
 
-    private bool applyColor;                        // should colors be applied?
+    private bool applyColor;                        // should terrain.Colors be applied?
     private bool applyElevation = true;             // should elevation be used?
+    private bool isDrag;                            // is there a valid drag?
 
     #endregion
 
@@ -37,6 +48,8 @@ public class HexMapEditor : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
             HandleInput();
+        else
+            previousCell = null;
     }
 
     #endregion
@@ -47,7 +60,36 @@ public class HexMapEditor : MonoBehaviour
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit) && !EventSystem.current.IsPointerOverGameObject())
-            EditCells(hexGrid.GetCell(hit.point));
+        {
+            HexCell currentCell = hexGrid.GetCell(hit.point);
+            if (previousCell && previousCell != currentCell)
+                ValidateDrag(currentCell);
+            else
+                isDrag = false;
+            EditCells(currentCell);
+            previousCell = currentCell;
+        }
+        else
+            previousCell = null;
+    }
+
+    /// <summary>
+    /// Verify that the current cell is a neighbor of the previous cell,
+    /// to determine the validation of a drag
+    /// </summary>
+    /// <param name="currentCell">current cell</param>
+    private void ValidateDrag(HexCell currentCell)
+    {
+        for(dragDirection = HexDirection.NE; dragDirection <= HexDirection.NW; dragDirection++)
+        {
+            if(previousCell.GetNeighbor(dragDirection) == currentCell)
+            {
+                isDrag = true;
+                return;
+            }
+        }
+
+        isDrag = false;
     }
 
     #endregion
@@ -66,6 +108,22 @@ public class HexMapEditor : MonoBehaviour
                 cell.Color = activeColor;
             if(applyElevation)
                 cell.Elevation = activeElevation;
+
+            if (riverMode == OptionalToggle.No)
+                cell.RemoveRiver();
+            if (roadMode == OptionalToggle.No)
+                cell.RemoveRoads();
+            if(isDrag)
+            {
+                HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
+                if(otherCell)
+                {
+                    if(riverMode == OptionalToggle.Yes)
+                        otherCell.SetOutgoingRiver(dragDirection);
+                    if (roadMode == OptionalToggle.Yes)
+                        otherCell.AddRoad(dragDirection);
+                }
+            }
         }
     }
 
@@ -95,7 +153,7 @@ public class HexMapEditor : MonoBehaviour
     }
 
     /// <summary>
-    /// Selects a color based on its index in the list of available colors
+    /// Selects a color based on its index in the list of available terrain.Colors
     /// </summary>
     /// <param name="index">color index</param>
     public void SelectColor(int index)
@@ -141,6 +199,24 @@ public class HexMapEditor : MonoBehaviour
     public void ShowUI(bool visible)
     {
         hexGrid.ShowUI(visible);
+    }
+
+    /// <summary>
+    /// Applies the correct rivermode based on the toggle setting
+    /// </summary>
+    /// <param name="mode">toggle mode</param>
+    public void SetRiverMode(int mode)
+    {
+        riverMode = (OptionalToggle)mode;
+    }
+
+    /// <summary>
+    /// Applies the correct roadmode based on the toggle setting
+    /// </summary>
+    /// <param name="mode">toggle mode</param>
+    public void SetRoadMode(int mode)
+    {
+        roadMode = (OptionalToggle)mode;
     }
 
     #endregion

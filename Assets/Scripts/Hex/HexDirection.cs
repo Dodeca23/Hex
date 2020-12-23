@@ -27,10 +27,33 @@ public static class HexDirectionExtensions
         direction == HexDirection.NE ? HexDirection.NW : (direction - 1);
 
     /// <summary>
+    /// Returns the second to last direction
+    /// </summary>
+    /// <param name="direction">current direction</param>
+    /// <returns></returns>
+    public static HexDirection Previous2(this HexDirection direction)
+    {
+        direction -= 2;
+        return direction >= HexDirection.NE ? direction : (direction + 6);
+
+    }
+
+    /// <summary>
     /// Returns the next direction
     /// </summary>
     /// <param name="direction">current direction</param>
     /// <returns></returns>
     public static HexDirection Next(this HexDirection direction) =>
         direction == HexDirection.NW ? HexDirection.NE : (direction + 1);
+
+    /// <summary>
+    /// Returns the second next direction
+    /// </summary>
+    /// <param name="direction">current direction</param>
+    /// <returns></returns>
+    public static HexDirection Next2(this HexDirection direction)
+    {
+        direction += 2;
+        return direction <= HexDirection.NW ? direction : (direction - 6);
+    }
 }

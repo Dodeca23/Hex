@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Triangles : Shape
+public class Triangles : CustomMesh
 {
     /// <summary>
     /// Adds a distorted triangle given three vertex positions
@@ -67,6 +67,20 @@ public class Triangles : Shape
         colors.Add(c1);
         colors.Add(c2);
         colors.Add(c3);
+    }
+
+    /// <summary>
+    /// Adds uv coord to each vertex of a triangle
+    /// </summary>
+    /// <param name="uv1">first uv</param>
+    /// <param name="uv2">second uv</param>
+    /// <param name="uv3">third uv</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector2 uv3, List<Vector2> uvs)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
     }
 }
 

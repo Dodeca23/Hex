@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shape 
+public class CustomMesh 
 {
     public static Vector3 Perturb(Vector3 position)
     {

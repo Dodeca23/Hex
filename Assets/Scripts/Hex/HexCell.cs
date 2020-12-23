@@ -8,7 +8,9 @@ public class HexCell : MonoBehaviour
     #region Fields
 
     [SerializeField]
-    private HexCell[] neighbors;
+    private HexCell[] neighbors = default;                      // stores the neighbors of a cell
+    [SerializeField]
+    private bool[] roads = default;                             // keeps track of the roads of a cell
 
     public HexCoordinates coordinates;                          // stores the coordinate of a cell
     public Color color;                                         // stores the color of a cell
@@ -26,6 +28,7 @@ public class HexCell : MonoBehaviour
 
     #region Properties
 
+    #region Cell Data
     /// <summary>
     /// Gets and sets the elevation of a cell
     /// </summary>
@@ -53,6 +56,12 @@ public class HexCell : MonoBehaviour
                 RemoveOutgoingRiver();
             if (hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation)
                 RemoveIncomingRiver();
+
+            for (int i = 0; i < roads.Length; i++)
+            {
+                if (roads[i] && GetElevationDifference((HexDirection)i) > 1)
+                    SetRoad(i, false);
+            }
 
             Refresh();
         }
@@ -82,6 +91,8 @@ public class HexCell : MonoBehaviour
     /// Retrieves the position of a cell
     /// </summary>
     public Vector3 Position => transform.localPosition;
+
+    #endregion
 
     #region Rivers
 
@@ -114,7 +125,34 @@ public class HexCell : MonoBehaviour
     /// Returns whether the cell has a begin or endpoint for a river
     /// </summary>
     public bool HasRiverBeginOrEnd => hasIncomingRiver != hasOutgoingRiver;
-    
+
+    /// <summary>
+    /// Retrieves the vertical position of the cell's streambed
+    /// </summary>
+    public float StreamBedY =>
+        (elevation + HexMetrics.STREAMBEDELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
+
+    #endregion
+
+    #region Roads
+
+    /// <summary>
+    /// Returns true when a cell contains at least one road
+    /// </summary>
+    public bool HasRoads
+    {
+        get
+        {
+            for (int i = 0; i < roads.Length; i++)
+            {
+                if (roads[i])
+                    return true;
+            }
+
+            return false;
+        }
+    }
+
     #endregion
 
     #endregion
@@ -156,6 +194,18 @@ public class HexCell : MonoBehaviour
     public HexEdgeType GetEdgeType(HexCell othercell) =>
         HexMetrics.GetEdgeType(elevation, othercell.elevation);
 
+    /// <summary>
+    /// Returns the absolute elevationdifference between the cell
+    /// and a neighbor in a given direction
+    /// </summary>
+    /// <param name="direction">direction of neighbor</param>
+    /// <returns></returns>
+    public int GetElevationDifference(HexDirection direction)
+    {
+        int difference = elevation - GetNeighbor(direction).elevation;
+        return difference >= 0 ? difference : -difference;
+    }
+
     #endregion
 
     #region Rivers
@@ -191,12 +241,12 @@ public class HexCell : MonoBehaviour
 
         hasOutgoingRiver = true;
         outgoingRiver = direction;
-        RefreshSelfOnly();
 
         neighbor.RemoveIncomingRiver();
         neighbor.hasIncomingRiver = true;
         neighbor.incomingRiver = direction.Opposite();
-        neighbor.RefreshSelfOnly();
+
+        SetRoad((int)direction, false);
     }
 
     /// <summary>
@@ -238,6 +288,63 @@ public class HexCell : MonoBehaviour
     {
         RemoveOutgoingRiver();
         RemoveIncomingRiver();
+    }
+
+    /// <summary>
+    /// Retrieves the vertical position of the river surface
+    /// </summary>
+    public float RiverSurfaceY =>
+        (elevation + HexMetrics.RIVERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
+    #endregion
+
+    #region Roads
+
+    /// <summary>
+    /// Returns whether a cell has a road through an edge in a given direction
+    /// </summary>
+    /// <param name="direction">direction of edge</param>
+    /// <returns></returns>
+    public bool HasRoadThroughEdge(HexDirection direction) =>
+        roads[(int)direction];
+
+    /// <summary>
+    /// Remove all roads from a cell
+    /// </summary>
+    public void RemoveRoads()
+    {
+        for (int i = 0; i < neighbors.Length; i++)
+        {
+            if (roads[i])
+            {
+                SetRoad(i, false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds a road to a cell in a given direction
+    /// </summary>
+    /// <param name="direction">direction</param>
+    public void AddRoad(HexDirection direction)
+    {
+        if (!roads[(int)direction] && !HasRiverThroughEdge(direction) &&
+            GetElevationDifference(direction) <= 1)
+        {
+            SetRoad((int)direction, true);
+        }
+    }
+
+    /// <summary>
+    /// Removes or adds a road depending of the state
+    /// </summary>
+    /// <param name="index">index</param>
+    /// <param name="state">state (add or remove)</param>
+    private void SetRoad(int index, bool state)
+    {
+        roads[index] = state;
+        neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
+        neighbors[index].RefreshSelfOnly();
+        RefreshSelfOnly();
     }
 
     #endregion
