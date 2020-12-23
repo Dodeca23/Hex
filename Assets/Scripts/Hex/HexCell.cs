@@ -120,8 +120,8 @@ public class HexCell : MonoBehaviour
     /// </summary>
     public float StreamBedY =>
         (elevation + HexMetrics.STREAMBEDELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
-    
-    #endregion
+
+    #endregion    
 
     #endregion
 
@@ -246,6 +246,11 @@ public class HexCell : MonoBehaviour
         RemoveIncomingRiver();
     }
 
+    /// <summary>
+    /// Retrieves the vertical position of the river surface
+    /// </summary>
+    public float RiverSurfaceY =>
+        (elevation + HexMetrics.RIVERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
     #endregion
 
     #region Updating

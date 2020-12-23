@@ -41,7 +41,8 @@ public class HexMetrics
     public const float NOISESCALE = 0.003f;
     // Defines the vertical elevation of the streambed
     public const float STREAMBEDELEVATIONOFFSET = -1f;
-
+    // Defines the vertical elevation of a river surface
+    public const float RIVERSURFACEELEVATIONOFFSET = -0.5f;
     #endregion
 
     #region Static Fields

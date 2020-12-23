@@ -29,9 +29,9 @@ public class HexMesh : MonoBehaviour
     #region Properties
 
     public List<Vector3> Vertices => vertices;
-
     public List<int> Triangles => triangles;
     public List<Color> Colors => colors;
+    public List<Vector2> Uvs => uvs;
 
     #endregion
 

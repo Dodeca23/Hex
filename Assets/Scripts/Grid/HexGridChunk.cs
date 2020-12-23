@@ -7,7 +7,10 @@ public class HexGridChunk : MonoBehaviour
 {
     #region Fields
 
-    public HexMesh terrain;
+    [SerializeField]
+    private HexMesh terrain = default;
+    [SerializeField]
+    private HexMesh rivers = default;
 
     private HexCell[] cells;
     private Canvas gridCanvas;
@@ -69,6 +72,7 @@ public class HexGridChunk : MonoBehaviour
     public void Triangulate()
     {
         terrain.Clear();
+        rivers.Clear();
 
         for (int i = 0; i < cells.Length; i++)
         {
@@ -76,6 +80,7 @@ public class HexGridChunk : MonoBehaviour
         }
 
         terrain.Apply();
+        rivers.Apply();
     }
 
     /// <summary>
@@ -148,7 +153,13 @@ public class HexGridChunk : MonoBehaviour
             e1.v1 + bridge, e1.v5 + bridge);
 
         if (cell.HasRiverThroughEdge(direction))
+        {
             e2.v3.y = neighbor.StreamBedY;
+            TriangulateRiverQuad(
+                e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbor.RiverSurfaceY,
+                cell.HasIncomingRiver &&
+                cell.IncomingRiver == direction);
+        }
 
         // Only create terraces for sloped edges
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
@@ -528,6 +539,10 @@ public class HexGridChunk : MonoBehaviour
         Quads.AddQuadColor(cell.color, terrain.Colors);
         Triangles.AddTriangle(centerR, m.v4, m.v5, terrain.Vertices, terrain.Triangles);
         Triangles.AddTriangleColor(cell.color, terrain.Colors);
+
+        bool reversed = cell.IncomingRiver == direction;
+        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, reversed);
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed);
     }
 
     /// <summary>
@@ -548,6 +563,16 @@ public class HexGridChunk : MonoBehaviour
 
         TriangulateEdgeStrip(m, cell.color, e, cell.color);
         TriangulateEdgeFan(center, m, cell.color);
+
+        bool reversed = cell.HasIncomingRiver;
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed);
+
+        center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
+        Triangles.AddTriangle(center, m.v2, m.v4, rivers.Vertices, rivers.Triangles);
+        if (reversed)
+            Triangles.AddTriangleUV(new Vector2(0.5f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f), rivers.Uvs);
+        else
+            Triangles.AddTriangleUV(new Vector2(0.5f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f), rivers.Uvs);
     }
 
     /// <summary>
@@ -585,6 +610,44 @@ public class HexGridChunk : MonoBehaviour
 
         TriangulateEdgeStrip(m, cell.color, e, cell.color);
         TriangulateEdgeFan(center, m, cell.color);
+    }
+
+    /// <summary>
+    /// Triangulates a single river quad
+    /// </summary>
+    /// <param name="v1">first vertex</param>
+    /// <param name="v2">second vertex</param>
+    /// <param name="v3">third vertex</param>
+    /// <param name="v4">fourth vertex</param>
+    /// <param name="y1">first vertical position</param>
+    /// <param name="y2">second vertical position</param>
+    /// <param name="reversed">is the riverflow reversed?</param>
+    private void TriangulateRiverQuad(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y1, float y2, bool reversed)
+    {
+        // Elevation of each vertex is the same 
+        v1.y = v2.y = y1;
+        v3.y = v4.y = y2;
+        Quads.AddQuad(v1, v2, v3, v4, rivers.Vertices, rivers.Triangles);
+        if (reversed)
+            Quads.AddQuadUV(1f, 0f, 1f, 0f, rivers.Uvs);
+        else
+            Quads.AddQuadUV(0f, 1f, 0f, 1f, rivers.Uvs);
+    }
+
+    /// <summary>
+    /// Triangulates a single river quad with no elevationdifference
+    /// </summary>
+    /// <param name="v1">first vertex</param>
+    /// <param name="v2">second vertex</param>
+    /// <param name="v3">third vertex</param>
+    /// <param name="v4">fourth vertex</param>
+    /// <param name="y">vertical position</param>
+    /// <param name="reversed">is the riverflow reversed?</param>
+    private void TriangulateRiverQuad(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y, bool reversed)
+    {
+        TriangulateRiverQuad(v1, v2, v3, v4, y, y, reversed);
     }
 
     #endregion
