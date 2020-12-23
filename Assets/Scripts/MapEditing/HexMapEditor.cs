@@ -24,6 +24,8 @@ public class HexMapEditor : MonoBehaviour
     }
 
     private OptionalToggle riverMode;               // checks the different modes for applying a river
+    private OptionalToggle roadMode;                // checks the different modes for applying a road
+
     private Color activeColor;                      // currently applied color
     private HexDirection dragDirection;             // direction of a drag
     private HexCell previousCell;                   // previous cell during a drag
@@ -109,11 +111,18 @@ public class HexMapEditor : MonoBehaviour
 
             if (riverMode == OptionalToggle.No)
                 cell.RemoveRiver();
-            else if (isDrag && riverMode == OptionalToggle.Yes)
+            if (roadMode == OptionalToggle.No)
+                cell.RemoveRoads();
+            if(isDrag)
             {
                 HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
                 if(otherCell)
-                    otherCell.SetOutgoingRiver(dragDirection);
+                {
+                    if(riverMode == OptionalToggle.Yes)
+                        otherCell.SetOutgoingRiver(dragDirection);
+                    if (roadMode == OptionalToggle.Yes)
+                        otherCell.AddRoad(dragDirection);
+                }
             }
         }
     }
@@ -199,6 +208,15 @@ public class HexMapEditor : MonoBehaviour
     public void SetRiverMode(int mode)
     {
         riverMode = (OptionalToggle)mode;
+    }
+
+    /// <summary>
+    /// Applies the correct roadmode based on the toggle setting
+    /// </summary>
+    /// <param name="mode">toggle mode</param>
+    public void SetRoadMode(int mode)
+    {
+        roadMode = (OptionalToggle)mode;
     }
 
     #endregion
