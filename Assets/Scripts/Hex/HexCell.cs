@@ -132,6 +132,12 @@ public class HexCell : MonoBehaviour
     public float StreamBedY =>
         (elevation + HexMetrics.STREAMBEDELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
 
+    /// <summary>
+    /// Returns the direction of the in- or outgoing river
+    /// </summary>
+    public HexDirection RiverBeginOrEndDirection =>
+        hasIncomingRiver ? incomingRiver : outgoingRiver;
+
     #endregion
 
     #region Roads
