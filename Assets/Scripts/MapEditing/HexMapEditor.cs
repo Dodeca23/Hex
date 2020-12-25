@@ -17,6 +17,8 @@ public class HexMapEditor : MonoBehaviour
     private Text elevationLevelText = default;
     [SerializeField]
     private Text brushSizeText = default;
+    [SerializeField]
+    private Text waterLevelText = default;
 
     private enum OptionalToggle
     {
@@ -32,9 +34,12 @@ public class HexMapEditor : MonoBehaviour
 
     private int activeElevation;                    // currently applied elevation 
     private int brushSize;                          // size of the brush to edit cells
+    private int activeWaterLevel;                   // currently applied waterlevel
 
     private bool applyColor;                        // should terrain.Colors be applied?
     private bool applyElevation = true;             // should elevation be used?
+    private bool applyWaterLevel = true;            // should submerging cells be applied?
+
     private bool isDrag;                            // is there a valid drag?
 
     #endregion
@@ -108,6 +113,8 @@ public class HexMapEditor : MonoBehaviour
                 cell.Color = activeColor;
             if(applyElevation)
                 cell.Elevation = activeElevation;
+            if (applyWaterLevel)
+                cell.WaterLevel = activeWaterLevel;
 
             if (riverMode == OptionalToggle.No)
                 cell.RemoveRiver();
@@ -179,17 +186,32 @@ public class HexMapEditor : MonoBehaviour
         brushSizeText.text = brushSize.ToString();
     }
 
+    public void SetWaterLevel(float level)
+    {
+        activeWaterLevel = (int)level;
+        waterLevelText.text = activeWaterLevel.ToString();
+    }
+
     #endregion
 
     #region Toggle On/Off
 
     /// <summary>
-    /// Toggles whether elevation should b applied
+    /// Toggles whether elevation should be applied
     /// </summary>
     /// <param name="toggle">on or off</param>
     public void SetApplyElevation(bool toggle)
     {
         applyElevation = toggle;
+    }
+
+    /// <summary>
+    /// Toggles whether cells should be covered with water
+    /// </summary>
+    /// <param name="toggle">on or off</param>
+    public void SetApplyWaterLevel(bool toggle)
+    {
+        applyWaterLevel = toggle;
     }
 
     /// <summary>

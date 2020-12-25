@@ -18,6 +18,7 @@ public class HexCell : MonoBehaviour
     public HexGridChunk chunk;
 
     private int elevation = int.MinValue;                       // stores the elevationlevel of a cell
+    private int waterLevel;                                     // stores the elevation of the water surface
 
     private bool hasIncomingRiver;                              // does the cell contain an incoming river?
     private bool hasOutgoingRiver;                              // does the cell contain an outgoing river?
@@ -138,6 +139,12 @@ public class HexCell : MonoBehaviour
     public HexDirection RiverBeginOrEndDirection =>
         hasIncomingRiver ? incomingRiver : outgoingRiver;
 
+    /// <summary>
+    /// Retrieves the vertical position of the river surface
+    /// </summary>
+    public float RiverSurfaceY =>
+        (elevation + HexMetrics.WATERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
+
     #endregion
 
     #region Roads
@@ -158,6 +165,38 @@ public class HexCell : MonoBehaviour
             return false;
         }
     }
+
+    #endregion
+
+    #region Water
+
+    /// <summary>
+    /// Gets and sets the elevation of the water surface
+    /// </summary>
+    public int WaterLevel
+    {
+        get => waterLevel;
+        set
+        {
+            if (waterLevel == value)
+                return;
+
+            waterLevel = value;
+            Refresh();
+        }
+    }
+
+    /// <summary>
+    /// Returns true when a cell's elevation is less than a cell waterlevel
+    /// </summary>
+    public bool IsUnderwater =>
+        waterLevel > elevation;
+
+    /// <summary>
+    /// Returns the watersurface of a submerged cell
+    /// </summary>
+    public float WaterSurfaceY =>
+        (waterLevel + HexMetrics.WATERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
 
     #endregion
 
@@ -296,11 +335,6 @@ public class HexCell : MonoBehaviour
         RemoveIncomingRiver();
     }
 
-    /// <summary>
-    /// Retrieves the vertical position of the river surface
-    /// </summary>
-    public float RiverSurfaceY =>
-        (elevation + HexMetrics.RIVERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
     #endregion
 
     #region Roads
