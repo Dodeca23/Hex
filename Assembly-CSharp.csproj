@@ -75,6 +75,7 @@
   <ItemGroup>
      <None Include="Assets\Materials\Shaders\River.shader" />
      <None Include="Assets\Materials\Shaders\Road.shader" />
+     <None Include="Assets\Materials\Shaders\Water.shader" />
      <None Include="Assets\Materials\Shaders\VertexColors.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Users\Nicole\Documents\Unity\2020.1.11f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
