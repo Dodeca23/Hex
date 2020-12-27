@@ -16,11 +16,13 @@
         #pragma surface surf Standard alpha
         #pragma target 3.0
 
+        #include "Water.cginc"
         sampler2D _MainTex;
 
         struct Input
         {
             float2 uv_MainTex;
+            float3 worldPos;
         };
 
         half _Glossiness;
@@ -32,8 +34,9 @@
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
+            float waves = Waves(IN.worldPos.xz, _MainTex);
 
-            fixed4 c = _Color;
+            fixed4 c = saturate(_Color + waves);
 
             o.Albedo = c.rgb;
             o.Metallic = _Metallic;
