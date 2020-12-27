@@ -43,6 +43,11 @@ public class HexMetrics
     public const float STREAMBEDELEVATIONOFFSET = -1.75f;
     // Defines the vertical elevation of a water surface
     public const float WATERSURFACEELEVATIONOFFSET = -0.5f;
+    // radius of the water hexagons
+    public const float WATERFACTOR = 0.6f;
+    // size of the water bridge
+    public const float WATERBLENDFACTOR = 1f - WATERFACTOR;
+
     #endregion
 
     #region Static Fields
@@ -177,6 +182,26 @@ public class HexMetrics
     public static Vector3 GetSolidEdgeMiddle(HexDirection direction) =>
         (corners[(int)direction] + corners[(int)direction + 1]) *
         (0.5f * SOLIDFACTOR);
+
+    /// <summary>
+    /// Gets the first water corner in a given direction
+    /// </summary>
+    /// <param name="direction">direction</param>
+    /// <returns></returns>
+    public static Vector3 GetFirstWaterCorner(HexDirection direction) =>
+        corners[(int)direction] * WATERFACTOR;
+
+    /// <summary>
+    /// Gets the second water corner in a given direction
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    public static Vector3 GetSecondWaterCorner(HexDirection direction) =>
+        corners[(int)direction + 1] * WATERFACTOR;
+
+    //Returns the bridge between two water corners
+    public static Vector3 GetWaterBridge(HexDirection direction) =>
+        (corners[(int)direction] + corners[(int)direction + 1]) * WATERBLENDFACTOR;
 
     #endregion
 
