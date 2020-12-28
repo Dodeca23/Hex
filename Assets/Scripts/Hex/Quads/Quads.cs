@@ -106,7 +106,7 @@ public class Quads : CustomMesh
     }
 
     /// <summary>
-    /// Adds uv coord to each vertex of a quad
+    /// Adds the first uv set to each vertex of a quad
     /// </summary>
     /// <param name="uv1">first uv</param>
     /// <param name="uv2">second uv</param>
@@ -122,7 +122,7 @@ public class Quads : CustomMesh
     }
 
     /// <summary>
-    /// Adds a rectangular uv area to a quad
+    /// Adds a rectangle with the first uv set to a quad
     /// </summary>
     /// <param name="uMin">first corner</param>
     /// <param name="uMax">second corner</param>
@@ -135,6 +135,38 @@ public class Quads : CustomMesh
         uvs.Add(new Vector2(uMax, vMin));
         uvs.Add(new Vector2(uMin, vMax));
         uvs.Add(new Vector2(uMax, vMax));
+    }
+
+    /// <summary>
+    /// Adds the second uv set to each vertex of a quad
+    /// </summary>
+    /// <param name="uv1">first uv</param>
+    /// <param name="uv2">second uv</param>
+    /// <param name="uv3">third uv</param>
+    /// <param name="uv4">fourth uv</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddQuadUV2(Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4, List<Vector2> uv2s)
+    {
+        uv2s.Add(uv1);
+        uv2s.Add(uv2);
+        uv2s.Add(uv3);
+        uv2s.Add(uv4);
+    }
+
+    /// <summary>
+    /// Adds a rectangle with the second uv set to a quad
+    /// </summary>
+    /// <param name="uMin">first corner</param>
+    /// <param name="uMax">second corner</param>
+    /// <param name="vMin">third corner</param>
+    /// <param name="vMax">fourth corner</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddQuadUV2(float uMin, float uMax, float vMin, float vMax, List<Vector2> uv2s)
+    {
+        uv2s.Add(new Vector2(uMin, vMin));
+        uv2s.Add(new Vector2(uMax, vMin));
+        uv2s.Add(new Vector2(uMin, vMax));
+        uv2s.Add(new Vector2(uMax, vMax));
     }
 }
 

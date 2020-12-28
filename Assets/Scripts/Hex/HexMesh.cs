@@ -14,11 +14,13 @@ public class HexMesh : MonoBehaviour
     public bool useCollider;
     public bool useColors;
     public bool useUVCoordinates;
+    public bool useUV2Coordinates;
 
     [NonSerialized] List<Vector3> vertices;     // stores the vertices of the mesh
     [NonSerialized] List<int> triangles;        // stores the triangles of the mesh
     [NonSerialized] List<Color> colors;         // stores the possible colors of the mesh
-    [NonSerialized] List<Vector2> uvs;          // stores the uv coords of the mesh
+    [NonSerialized] List<Vector2> uvs;          // stores the first uv set of the mesh
+    [NonSerialized] List<Vector2> uv2s;         // stores the second uv set of the mesh
 
     private Mesh hexMesh;                       // referene to te mesh component
 
@@ -32,6 +34,8 @@ public class HexMesh : MonoBehaviour
     public List<int> Triangles => triangles;
     public List<Color> Colors => colors;
     public List<Vector2> Uvs => uvs;
+
+    public List<Vector2> Uv2s => uv2s;
 
     #endregion
 
@@ -56,6 +60,8 @@ public class HexMesh : MonoBehaviour
             colors = ListPool<Color>.Get();
         if (useUVCoordinates)
             uvs = ListPool<Vector2>.Get();
+        if (useUV2Coordinates)
+            uv2s = ListPool<Vector2>.Get();
         triangles = ListPool<int>.Get();
     }
 
@@ -74,6 +80,12 @@ public class HexMesh : MonoBehaviour
         {
             hexMesh.SetUVs(0, uvs);
             ListPool<Vector2>.Add(uvs);
+        }
+
+        if (useUV2Coordinates)
+        {
+            hexMesh.SetUVs(1, uv2s);
+            ListPool<Vector2>.Add(uv2s);
         }
 
         hexMesh.SetTriangles(triangles, 0);

@@ -70,7 +70,7 @@ public class Triangles : CustomMesh
     }
 
     /// <summary>
-    /// Adds uv coord to each vertex of a triangle
+    /// Adds the first uv set to each vertex of a triangle
     /// </summary>
     /// <param name="uv1">first uv</param>
     /// <param name="uv2">second uv</param>
@@ -81,6 +81,20 @@ public class Triangles : CustomMesh
         uvs.Add(uv1);
         uvs.Add(uv2);
         uvs.Add(uv3);
+    }
+
+    /// <summary>
+    /// Adds the second uv set to each vertex of a triangle
+    /// </summary>
+    /// <param name="uv1">first uv</param>
+    /// <param name="uv2">second uv</param>
+    /// <param name="uv3">third uv</param>
+    /// <param name="uvs">list of uvs</param>
+    public static void AddTriangleUV2(Vector2 uv1, Vector2 uv2, Vector2 uv3, List<Vector2> uv2s)
+    {
+        uv2s.Add(uv1);
+        uv2s.Add(uv2);
+        uv2s.Add(uv3);
     }
 }
 

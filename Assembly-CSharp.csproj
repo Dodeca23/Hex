@@ -77,6 +77,7 @@
      <None Include="Assets\Materials\Shaders\Road.shader" />
      <None Include="Assets\Materials\Shaders\Water.shader" />
      <None Include="Assets\Materials\Shaders\VertexColors.shader" />
+     <None Include="Assets\Materials\Shaders\Estuary.shader" />
      <None Include="Assets\Materials\Shaders\Water.cginc" />
      <None Include="Assets\Materials\Shaders\WaterShore.shader" />
     <Reference Include="UnityEngine">
