@@ -59,6 +59,8 @@ public class Quads : CustomMesh
         triangles.Add(vertexIndex + 2);
         triangles.Add(vertexIndex + 3);
     }
+
+
     /// <summary>
     /// Adds the color data to a single quad
     /// </summary>
