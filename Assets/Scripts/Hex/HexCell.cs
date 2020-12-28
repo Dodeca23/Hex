@@ -53,10 +53,7 @@ public class HexCell : MonoBehaviour
             uiPosition.z = -position.y;
             uiRect.localPosition = uiPosition;
 
-            if (hasOutgoingRiver && elevation < GetNeighbor(outgoingRiver).elevation)
-                RemoveOutgoingRiver();
-            if (hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation)
-                RemoveIncomingRiver();
+            ValidateRivers();
 
             for (int i = 0; i < roads.Length; i++)
             {
@@ -182,6 +179,7 @@ public class HexCell : MonoBehaviour
                 return;
 
             waterLevel = value;
+            ValidateRivers();
             Refresh();
         }
     }
@@ -276,7 +274,7 @@ public class HexCell : MonoBehaviour
         // If there doesn't exist a neighbor or
         // when the neighbor has a higher elevation, do nothing
         HexCell neighbor = GetNeighbor(direction);
-        if (!neighbor || elevation < neighbor.elevation) return;
+        if (!IsValidRiverDestination(neighbor)) return;
 
         // Clear the previous outgoing river and the incomingriver when it
         // overlaps with the newly created outgoing river
@@ -333,6 +331,25 @@ public class HexCell : MonoBehaviour
     {
         RemoveOutgoingRiver();
         RemoveIncomingRiver();
+    }
+
+    /// <summary>
+    /// Checks whether a cell is a valid destination for a river
+    /// </summary>
+    /// <param name="neighbor">neighbor cell</param>
+    /// <returns></returns>
+    private bool IsValidRiverDestination(HexCell neighbor) =>
+        neighbor && (elevation >= neighbor.elevation || waterLevel == neighbor.elevation);
+
+    /// <summary>
+    /// Validates the rivers when changing either the elevation or water level.
+    /// </summary>
+    private void ValidateRivers()
+    {
+        if (hasOutgoingRiver && !IsValidRiverDestination(GetNeighbor(outgoingRiver)))
+            RemoveOutgoingRiver();
+        if (hasIncomingRiver && GetNeighbor(incomingRiver).IsValidRiverDestination(this))
+            RemoveIncomingRiver();
     }
 
     #endregion
