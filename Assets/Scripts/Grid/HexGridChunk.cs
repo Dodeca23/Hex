@@ -19,6 +19,8 @@ public class HexGridChunk : MonoBehaviour
     private HexMesh waterShore = default;
     [SerializeField]
     private HexMesh estuaries = default;
+    [SerializeField]
+    private HexFeatureManager features = default;
 
     private HexCell[] cells;
     private Canvas gridCanvas;
@@ -107,6 +109,7 @@ public class HexGridChunk : MonoBehaviour
         water.Clear();
         waterShore.Clear();
         estuaries.Clear();
+        features.Clear();
 
         for (int i = 0; i < cells.Length; i++)
         {
@@ -119,6 +122,7 @@ public class HexGridChunk : MonoBehaviour
         water.Apply();
         waterShore.Apply();
         estuaries.Apply();
+        features.Apply();
     }
 
     /// <summary>
@@ -132,6 +136,7 @@ public class HexGridChunk : MonoBehaviour
             Triangulate(d, cell);
         }
 
+        features.AddFeature(cell.Position);
     }
 
     /// <summary>

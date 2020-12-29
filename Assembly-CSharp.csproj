@@ -71,13 +71,14 @@
     <Compile Include="Assets\Scripts\Hex\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\Hex\Triangles\Triangles.cs" />
     <Compile Include="Assets\Scripts\Grid\HexGridChunk.cs" />
+    <Compile Include="Assets\Scripts\Hex\HexFeatureManager.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Materials\Shaders\River.shader" />
-     <None Include="Assets\Materials\Shaders\Road.shader" />
      <None Include="Assets\Materials\Shaders\Water.shader" />
-     <None Include="Assets\Materials\Shaders\VertexColors.shader" />
+     <None Include="Assets\Materials\Shaders\Road.shader" />
      <None Include="Assets\Materials\Shaders\Estuary.shader" />
+     <None Include="Assets\Materials\Shaders\VertexColors.shader" />
      <None Include="Assets\Materials\Shaders\Water.cginc" />
      <None Include="Assets\Materials\Shaders\WaterShore.shader" />
     <Reference Include="UnityEngine">
