@@ -19,6 +19,9 @@ public class HexCell : MonoBehaviour
 
     private int elevation = int.MinValue;                       // stores the elevationlevel of a cell
     private int waterLevel;                                     // stores the elevation of the water surface
+    private int urbanLevel;                                     // stores the level of urban buildings
+    private int ruralLevel;                                     // stores the level of rural buildings
+    private int woodLevel;                                      // stores the level of trees
 
     private bool hasIncomingRiver;                              // does the cell contain an incoming river?
     private bool hasOutgoingRiver;                              // does the cell contain an outgoing river?
@@ -195,6 +198,55 @@ public class HexCell : MonoBehaviour
     /// </summary>
     public float WaterSurfaceY =>
         (waterLevel + HexMetrics.WATERSURFACEELEVATIONOFFSET) * HexMetrics.ELEVATIONSTEP;
+
+    #endregion
+
+    #region Features
+
+    /// <summary>
+    /// Gets and sets the cell's level of urban buildings
+    /// </summary>
+    public int UrbanLevel
+    {
+        get => urbanLevel;
+        set
+        {
+            if (urbanLevel != value)
+                urbanLevel = value;
+
+            RefreshSelfOnly();
+        }
+    }
+
+    /// <summary>
+    ///  Gets and sets the cell's level of rural buildings
+    /// </summary>
+    public int RuralLevel
+    {
+        get => ruralLevel;
+        set
+        {
+            if (ruralLevel != value)
+                ruralLevel = value;
+
+            RefreshSelfOnly();
+        }
+    }
+
+    /// <summary>
+    /// Gets and sets the cell's level of wood
+    /// </summary>
+    public int WoodLevel
+    {
+        get => woodLevel;
+        set
+        {
+            if (woodLevel != value)
+                woodLevel = value;
+
+            RefreshSelfOnly();
+        }
+    }
 
     #endregion
 

@@ -29,6 +29,9 @@ public class HexGrid : MonoBehaviour
     [Tooltip("The noise texture used for adding distortion to the grid of cells.")]
     [SerializeField]
     private Texture2D noiseSource = default;
+    [Tooltip("Random seed.")]
+    [SerializeField]
+    private int seed = default;
 
     private HexGridChunk[] chunks;                      // collection of grid chunks
     private HexCell[] cells;                            // collection of all cells that form a grid
@@ -49,6 +52,7 @@ public class HexGrid : MonoBehaviour
     private void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(seed);
 
         cellCountX = chunkCountX * HexMetrics.CHUNKSIZEX;
         cellCountZ = chunkCountZ * HexMetrics.CHUNKSIZEZ;
@@ -62,6 +66,7 @@ public class HexGrid : MonoBehaviour
     {
         // Reassign the noise texture on enabling
         HexMetrics.noiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(seed);
     }
 
 
