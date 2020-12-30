@@ -19,6 +19,12 @@ public class HexMapEditor : MonoBehaviour
     private Text brushSizeText = default;
     [SerializeField]
     private Text waterLevelText = default;
+    [SerializeField]
+    private Text urbanLevelText = default;
+    [SerializeField]
+    private Text ruralLevelText = default;
+    [SerializeField]
+    private Text woodLevelText = default;
 
     private enum OptionalToggle
     {
@@ -35,10 +41,16 @@ public class HexMapEditor : MonoBehaviour
     private int activeElevation;                    // currently applied elevation 
     private int brushSize;                          // size of the brush to edit cells
     private int activeWaterLevel;                   // currently applied waterlevel
+    private int activeUrbanLevel;                   // currently applied urbanlevel
+    private int activeRuralLevel;                   // currently applied rurallevel
+    private int activeWoodLevel;                    // currently applied woodlevel
 
     private bool applyColor;                        // should terrain.Colors be applied?
     private bool applyElevation = true;             // should elevation be used?
-    private bool applyWaterLevel = true;            // should submerging cells be applied?
+    private bool applyWaterLevel = false;           // should submerging cells be applied?
+    private bool applyUrbanLevel = false;           // should the cell contain urban buildings?
+    private bool applyRuralLevel = false;           // should the cell contain rural buildings?
+    private bool applyWoodLevel = false;            // should the cell contain trees?
 
     private bool isDrag;                            // is there a valid drag?
 
@@ -115,6 +127,12 @@ public class HexMapEditor : MonoBehaviour
                 cell.Elevation = activeElevation;
             if (applyWaterLevel)
                 cell.WaterLevel = activeWaterLevel;
+            if (applyUrbanLevel)
+                cell.UrbanLevel = activeUrbanLevel;
+            if (applyRuralLevel)
+                cell.RuralLevel = activeRuralLevel;
+            if (applyWoodLevel)
+                cell.WoodLevel = activeWoodLevel;
 
             if (riverMode == OptionalToggle.No)
                 cell.RemoveRiver();
@@ -192,6 +210,24 @@ public class HexMapEditor : MonoBehaviour
         waterLevelText.text = activeWaterLevel.ToString();
     }
 
+    public void SetUrbanLevel(float level)
+    {
+        activeUrbanLevel = (int)level;
+        urbanLevelText.text = activeUrbanLevel.ToString();
+    }
+
+    public void SetRuralLevel(float level)
+    {
+        activeRuralLevel = (int)level;
+        ruralLevelText.text = activeRuralLevel.ToString();
+    }
+
+    public void SetWoodLevel(float level)
+    {
+        activeWoodLevel = (int)level;
+        woodLevelText.text = activeWoodLevel.ToString();
+    }
+
     #endregion
 
     #region Toggle On/Off
@@ -212,6 +248,33 @@ public class HexMapEditor : MonoBehaviour
     public void SetApplyWaterLevel(bool toggle)
     {
         applyWaterLevel = toggle;
+    }
+
+    /// <summary>
+    /// Toggles whether cells should contain urban buildings
+    /// </summary>
+    /// <param name="toggle">on or off</param>
+    public void SetApplyUrbanLevel(bool toggle)
+    {
+        applyUrbanLevel = toggle;
+    }
+
+    /// <summary>
+    /// Toggles whether cells should contain rural buildings
+    /// </summary>
+    /// <param name="toggle">on or off</param>
+    public void SetApplyRuralLevel(bool toggle)
+    {
+        applyRuralLevel = toggle;
+    }
+
+    /// <summary>
+    /// Toggles whether cells should contain trees
+    /// </summary>
+    /// <param name="toggle">on or off</param>
+    public void SetApplyWoodLevel(bool toggle)
+    {
+        applyWoodLevel = toggle;
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class HexMetrics 
 {
@@ -34,7 +33,7 @@ public class HexMetrics
     // Height of a terracestep
     public const float VERTICALTERRACESTEPSIZE = 1f / (TERRACESPERSLOPE + 1);
     // Strength of the noise that is applied
-    public const float CELLPERTURBSTRENGTH = 0f; //4f;
+    public const float CELLPERTURBSTRENGTH = 4f;
     // Strength of the noise that is applied vertically
     public const float ELEVATIONPERTURBSTRENGTH = 1.5F;
     // Scales the noisesample so it covers a larger area
@@ -47,6 +46,10 @@ public class HexMetrics
     public const float WATERFACTOR = 0.6f;
     // size of the water bridge
     public const float WATERBLENDFACTOR = 1f - WATERFACTOR;
+    // size of the hash table
+    public const int HASHGRIDSIZE = 256;
+    // scale at which the grid is stretched
+    public const float HASHGRIDSCALE = 0.25f;
 
     #endregion
 
@@ -65,6 +68,17 @@ public class HexMetrics
         new Vector3(-INNERRADIUS, 0f, -0.5f * OUTERRADIUS),
         new Vector3(-INNERRADIUS, 0f, 0.5f * OUTERRADIUS),
         new Vector3(0f, 0f, OUTERRADIUS)
+    };
+
+    // stores the hashgrid as an array of floats
+    private static HexHash[] hashGrid;
+
+    // Tresholds for randomizing features
+    private static float[][] featureTresholds =
+    {
+        new float[]{0.0f, 0.0f, 0.4f },
+        new float[]{0.0f, 0.4f, 0.6f },
+        new float[]{0.4f, 0.6f, 0.8f }
     };
 
     #endregion
@@ -202,6 +216,47 @@ public class HexMetrics
     //Returns the bridge between two water corners
     public static Vector3 GetWaterBridge(HexDirection direction) =>
         (corners[(int)direction] + corners[(int)direction + 1]) * WATERBLENDFACTOR;
+
+    /// <summary>
+    /// Fills the hashgrid with a random value on each position
+    /// </summary>
+    /// <param name="seed">random seed</param>
+    public static void InitializeHashGrid(int seed)
+    {
+        hashGrid = new HexHash[HASHGRIDSIZE * HASHGRIDSIZE];
+        Random.State currentState = Random.state;
+        Random.InitState(seed);
+        for (int i = 0; i < hashGrid.Length; i++)
+        {
+            hashGrid[i] = HexHash.Create();
+        }
+        Random.state = currentState;
+    }
+
+    /// <summary>
+    /// Retrieves a value using the x and z coordinates
+    /// </summary>
+    /// <param name="position">position</param>
+    /// <returns></returns>
+    public static HexHash SampleHashGrid(Vector3 position)
+    {
+        int x = (int)(position.x * HASHGRIDSCALE) % HASHGRIDSIZE;
+        if (x < 0)
+            x += HASHGRIDSIZE;
+        int z = (int)(position.z * HASHGRIDSCALE) % HASHGRIDSIZE;
+        if (z < 0)
+            z += HASHGRIDSIZE;
+
+        return hashGrid[x + z * HASHGRIDSIZE];
+    }
+
+    /// <summary>
+    /// Retruns the tresholds for a specific feature level
+    /// </summary>
+    /// <param name="level>"feature level</param>
+    /// <returns></returns>
+    public static float[] GetFeatureTresholds(int level) =>
+        featureTresholds[level];
 
     #endregion
 

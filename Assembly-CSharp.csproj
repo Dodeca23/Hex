@@ -68,10 +68,12 @@
     <Compile Include="Assets\Scripts\Grid\HexGrid.cs" />
     <Compile Include="Assets\Scripts\Metrics\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\Hex\Pooling\ListPool.cs" />
+    <Compile Include="Assets\Scripts\Hex\HexFeatures\HexFeatureManager.cs" />
     <Compile Include="Assets\Scripts\Hex\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\Hex\Triangles\Triangles.cs" />
     <Compile Include="Assets\Scripts\Grid\HexGridChunk.cs" />
-    <Compile Include="Assets\Scripts\Hex\HexFeatureManager.cs" />
+    <Compile Include="Assets\Scripts\Hex\HexFeatures\HexHash.cs" />
+    <Compile Include="Assets\Scripts\Hex\HexFeatures\HexFeatureCollection.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Materials\Shaders\River.shader" />
